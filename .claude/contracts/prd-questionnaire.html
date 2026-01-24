@@ -1,0 +1,554 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>ZenSpace PRD 需求问卷</title>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      body {
+        font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif;
+        background: linear-gradient(135deg, #1a1a2e 0%, #16213e 100%);
+        min-height: 100vh;
+        color: #e0e0e0;
+        padding: 40px 20px;
+      }
+
+      .container {
+        max-width: 800px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        text-align: center;
+        font-size: 2rem;
+        margin-bottom: 8px;
+        background: linear-gradient(90deg, #00d9ff, #00ff88);
+        -webkit-background-clip: text;
+        -webkit-text-fill-color: transparent;
+      }
+
+      .subtitle {
+        text-align: center;
+        color: #888;
+        margin-bottom: 40px;
+        font-size: 0.9rem;
+      }
+
+      .section {
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        border-radius: 16px;
+        padding: 24px;
+        margin-bottom: 24px;
+        backdrop-filter: blur(10px);
+      }
+
+      .section-header {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        margin-bottom: 20px;
+      }
+
+      .section-icon {
+        font-size: 1.5rem;
+      }
+
+      .section-title {
+        font-size: 1.1rem;
+        font-weight: 600;
+        color: #fff;
+      }
+
+      .question {
+        margin-bottom: 16px;
+      }
+
+      .question-text {
+        font-size: 0.95rem;
+        color: #ccc;
+        margin-bottom: 12px;
+      }
+
+      .options {
+        display: flex;
+        flex-direction: column;
+        gap: 8px;
+      }
+
+      .option {
+        display: flex;
+        align-items: center;
+        gap: 12px;
+        padding: 12px 16px;
+        background: rgba(255, 255, 255, 0.03);
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        border-radius: 10px;
+        cursor: pointer;
+        transition: all 0.2s ease;
+      }
+
+      .option:hover {
+        background: rgba(255, 255, 255, 0.08);
+        border-color: rgba(0, 217, 255, 0.3);
+      }
+
+      .option.selected {
+        background: rgba(0, 217, 255, 0.15);
+        border-color: #00d9ff;
+      }
+
+      .option input[type="checkbox"],
+      .option input[type="radio"] {
+        width: 18px;
+        height: 18px;
+        accent-color: #00d9ff;
+        cursor: pointer;
+      }
+
+      .option label {
+        flex: 1;
+        cursor: pointer;
+        font-size: 0.9rem;
+      }
+
+      .option .hint {
+        font-size: 0.75rem;
+        color: #666;
+        margin-left: 30px;
+        margin-top: 4px;
+      }
+
+      .submit-section {
+        text-align: center;
+        padding: 20px;
+      }
+
+      .submit-btn {
+        background: linear-gradient(90deg, #00d9ff, #00ff88);
+        color: #1a1a2e;
+        border: none;
+        padding: 16px 48px;
+        font-size: 1rem;
+        font-weight: 600;
+        border-radius: 12px;
+        cursor: pointer;
+        transition:
+          transform 0.2s,
+          box-shadow 0.2s;
+      }
+
+      .submit-btn:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 8px 24px rgba(0, 217, 255, 0.3);
+      }
+
+      .result {
+        display: none;
+        background: rgba(0, 217, 255, 0.1);
+        border: 1px solid #00d9ff;
+        border-radius: 16px;
+        padding: 24px;
+        margin-top: 24px;
+      }
+
+      .result h3 {
+        color: #00d9ff;
+        margin-bottom: 16px;
+      }
+
+      .result pre {
+        background: rgba(0, 0, 0, 0.3);
+        padding: 16px;
+        border-radius: 8px;
+        overflow-x: auto;
+        font-size: 0.85rem;
+        line-height: 1.6;
+        white-space: pre-wrap;
+      }
+
+      .copy-btn {
+        margin-top: 16px;
+        background: #00d9ff;
+        color: #1a1a2e;
+        border: none;
+        padding: 10px 24px;
+        border-radius: 8px;
+        cursor: pointer;
+        font-weight: 500;
+      }
+
+      .divider {
+        height: 1px;
+        background: rgba(255, 255, 255, 0.1);
+        margin: 16px 0;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🧘 ZenSpace PRD 需求问卷</h1>
+      <p class="subtitle">请勾选你的选择，完成后点击「生成配置」，将结果复制给我</p>
+
+      <!-- 1. 商业模式 -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">💰</span>
+          <span class="section-title">1. 收费模式</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">座位如何计费？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="pricing" value="hourly" />
+              <span>按小时计费（如 ¥10/小时）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="pricing" value="slot" />
+              <span>按时段计费（如 ¥50/4小时）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="pricing" value="daily" />
+              <span>按日计费（如 ¥88/全天）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="pricing" value="membership" />
+              <span>会员制（月卡/季卡/年卡）</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">不同区域是否差异定价？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="zonePricing" value="same" />
+              <span>统一价格</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="zonePricing" value="different" />
+              <span>按区域定价（静音区 > 普通区）</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2. MVP 范围 -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">📱</span>
+          <span class="section-title">2. MVP 功能范围</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">第一版（MVP）需要包含哪些模块？（可多选）</div>
+          <div class="options">
+            <label class="option">
+              <input type="checkbox" name="mvp" value="booking" checked />
+              <span>✅ 核心预约（日期 → 区域 → 座位 → 支付）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="myAppointments" checked />
+              <span>✅ 我的预约（查看/取消/签到）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="realtime" />
+              <span>实时座位状态（WebSocket 推送）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="stats" />
+              <span>学习统计（时长图表）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="points" />
+              <span>积分商城（赚取 + 兑换）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="achievements" />
+              <span>成就系统（徽章解锁）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="map" />
+              <span>门店地图（静态楼层图）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="mvp" value="notifications" />
+              <span>消息通知中心</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 3. 用户体系 -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">🔐</span>
+          <span class="section-title">3. 用户体系</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">支持哪些登录方式？（可多选）</div>
+          <div class="options">
+            <label class="option">
+              <input type="checkbox" name="login" value="phone" />
+              <span>📱 手机验证码登录</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="login" value="wechat" />
+              <span>💬 微信一键登录</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="login" value="password" />
+              <span>🔑 账号密码登录</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">是否需要会员等级体系？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="membership" value="none" />
+              <span>不需要，所有用户平等</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="membership" value="simple" />
+              <span>简单等级（普通 / VIP）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="membership" value="complex" />
+              <span>复杂等级（青铜/白银/黄金/铂金）</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 4. 预约规则 -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">⏰</span>
+          <span class="section-title">4. 预约规则</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">时段选择方式？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="timeSlot" value="fixed" />
+              <span>固定时段（上午/下午/晚间）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="timeSlot" value="hourly" />
+              <span>自由选择（精确到小时）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="timeSlot" value="halfHour" />
+              <span>自由选择（精确到半小时）</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">取消政策？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="cancelPolicy" value="free" />
+              <span>随时免费取消</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="cancelPolicy" value="tiered" />
+              <span>阶梯退款（提前2小时免费，之后扣费）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="cancelPolicy" value="noRefund" />
+              <span>不可取消</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">签到方式？</div>
+          <div class="options">
+            <label class="option">
+              <input type="checkbox" name="checkIn" value="qrCode" />
+              <span>扫码签到（用户展示二维码）</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="checkIn" value="manual" />
+              <span>手动点击签到</span>
+            </label>
+            <label class="option">
+              <input type="checkbox" name="checkIn" value="gps" />
+              <span>GPS 自动签到</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">超时未到处理？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="noShow" value="15min" />
+              <span>15 分钟后自动释放座位</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="noShow" value="30min" />
+              <span>30 分钟后自动释放座位</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="noShow" value="none" />
+              <span>不自动释放</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 5. 技术选型 -->
+      <div class="section">
+        <div class="section-header">
+          <span class="section-icon">🖥️</span>
+          <span class="section-title">5. 技术 & 平台</span>
+        </div>
+
+        <div class="question">
+          <div class="question-text">最终产品形态？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="platform" value="h5" />
+              <span>纯 H5 网页（移动端优先）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="platform" value="miniprogram" />
+              <span>微信小程序</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="platform" value="app" />
+              <span>原生 App（iOS + Android）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="platform" value="h5+mp" />
+              <span>H5 + 小程序双端</span>
+            </label>
+          </div>
+        </div>
+
+        <div class="divider"></div>
+
+        <div class="question">
+          <div class="question-text">后端架构？</div>
+          <div class="options">
+            <label class="option">
+              <input type="radio" name="backend" value="fullstack" />
+              <span>需要你规划完整后端（FastAPI）</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="backend" value="existing" />
+              <span>我已有后端，只需前端对接</span>
+            </label>
+            <label class="option">
+              <input type="radio" name="backend" value="baas" />
+              <span>使用 BaaS（Supabase/Firebase）</span>
+            </label>
+          </div>
+        </div>
+      </div>
+
+      <!-- 提交 -->
+      <div class="submit-section">
+        <button class="submit-btn" onclick="generateConfig()">🚀 生成配置</button>
+      </div>
+
+      <!-- 结果 -->
+      <div class="result" id="result">
+        <h3>📋 你的选择结果</h3>
+        <pre id="configOutput"></pre>
+        <button class="copy-btn" onclick="copyConfig()">📋 复制配置</button>
+      </div>
+    </div>
+
+    <script>
+      // 添加选中效果
+      document.querySelectorAll(".option").forEach((option) => {
+        const input = option.querySelector("input");
+        input.addEventListener("change", () => {
+          if (input.type === "radio") {
+            option
+              .closest(".options")
+              .querySelectorAll(".option")
+              .forEach((o) => o.classList.remove("selected"));
+          }
+          if (input.checked) {
+            option.classList.add("selected");
+          } else {
+            option.classList.remove("selected");
+          }
+        });
+      });
+
+      function generateConfig() {
+        const config = {
+          收费模式: {
+            计费方式: getRadioValue("pricing"),
+            区域差异定价: getRadioValue("zonePricing"),
+          },
+          MVP功能: getCheckboxValues("mvp"),
+          用户体系: {
+            登录方式: getCheckboxValues("login"),
+            会员等级: getRadioValue("membership"),
+          },
+          预约规则: {
+            时段选择: getRadioValue("timeSlot"),
+            取消政策: getRadioValue("cancelPolicy"),
+            签到方式: getCheckboxValues("checkIn"),
+            超时处理: getRadioValue("noShow"),
+          },
+          技术选型: {
+            产品形态: getRadioValue("platform"),
+            后端架构: getRadioValue("backend"),
+          },
+        };
+
+        const output = JSON.stringify(config, null, 2);
+        document.getElementById("configOutput").textContent = output;
+        document.getElementById("result").style.display = "block";
+        document.getElementById("result").scrollIntoView({ behavior: "smooth" });
+      }
+
+      function getRadioValue(name) {
+        const selected = document.querySelector(`input[name="${name}"]:checked`);
+        return selected ? selected.value : "未选择";
+      }
+
+      function getCheckboxValues(name) {
+        const checkboxes = document.querySelectorAll(`input[name="${name}"]:checked`);
+        return Array.from(checkboxes).map((cb) => cb.value);
+      }
+
+      function copyConfig() {
+        const text = document.getElementById("configOutput").textContent;
+        navigator.clipboard.writeText(text).then(() => {
+          const btn = document.querySelector(".copy-btn");
+          btn.textContent = "✅ 已复制！";
+          setTimeout(() => (btn.textContent = "📋 复制配置"), 2000);
+        });
+      }
+    </script>
+  </body>
+</html>

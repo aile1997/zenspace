@@ -1,0 +1,15 @@
+{
+  "name": "zenspace-frontend-monorepo",
+  "private": true,
+  "version": "1.0.0",
+  "description": "ZenSpace 移动端全栈前端工作空间",
+  "scripts": {
+    "dev": "pnpm --filter @zenspace/ui dev",
+    "build": "pnpm --filter @zenspace/ui build",
+    "test": "pnpm --filter @zenspace/core test"
+  },
+  "devDependencies": {
+    "pnpm": "^10.0.0",
+    "typescript": "~5.3.3"
+  }
+}

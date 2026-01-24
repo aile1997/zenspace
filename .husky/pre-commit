@@ -1,0 +1,53 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "🔍 运行 pre-commit 检查..."
+
+# 检查测试文件完整性
+echo ""
+echo "检查测试文件完整性..."
+
+REQUIRED_TEST_FILES=(
+  "frontend/packages/core/tests/composables/useAuth.spec.ts"
+  "frontend/packages/core/tests/composables/useBooking.spec.ts"
+  "frontend/packages/core/tests/composables/useSeat.spec.ts"
+  "frontend/packages/core/tests/composables/useZone.spec.ts"
+)
+
+for file in "${REQUIRED_TEST_FILES[@]}"; do
+  if [ ! -f "$file" ]; then
+    echo "❌ 错误: 测试文件缺失: $file"
+    echo "请恢复测试文件后再提交!"
+    exit 1
+  fi
+done
+
+echo "✅ 所有必需的测试文件都存在"
+
+# 零污染检查
+echo ""
+echo "检查平台 API 泄露..."
+
+if grep -r "uni\." frontend/packages/core/src/ --include="*.ts" --include="*.js" | grep -v "^[^:]*://"; then
+  echo "❌ 错误: Core 层发现 uni.xxx 调用!"
+  echo "Core 层严禁使用平台特定 API，请通过 adapters 接口进行抽象。"
+  exit 1
+fi
+
+echo "✅ 零污染检查通过"
+
+# 运行 core 层测试
+echo ""
+echo "运行核心层测试..."
+cd frontend
+pnpm --filter @zenspace/core test --run
+
+if [ $? -ne 0 ]; then
+  echo "❌ 错误: 测试失败"
+  echo "请修复测试后再提交!"
+  exit 1
+fi
+
+echo "✅ 测试通过"
+echo ""
+echo "🎉 Pre-commit 检查全部通过!"

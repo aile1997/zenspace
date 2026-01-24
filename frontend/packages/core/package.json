@@ -1,0 +1,21 @@
+{
+  "name": "@zenspace/core",
+  "version": "1.0.0",
+  "description": "ZenSpace 核心业务逻辑 (平台无关)",
+  "main": "index.ts",
+  "scripts": {
+    "test": "vitest run",
+    "test:watch": "vitest"
+  },
+  "dependencies": {
+    "pinia": "^2.1.7",
+    "vue": "^3.4.0"
+  },
+  "devDependencies": {
+    "typescript": "^5.3.3",
+    "vitest": "^1.2.1",
+    "@types/node": "^20.11.0",
+    "@vue/test-utils": "^2.4.0",
+    "happy-dom": "^13.0.0"
+  }
+}

@@ -1,0 +1,119 @@
+name: Test Files Protection
+
+on:
+  pull_request:
+    paths:
+      - 'frontend/packages/core/tests/**'
+      - 'frontend/packages/core/src/**'
+  push:
+    branches: [main, develop]
+
+jobs:
+  # 检查测试文件完整性
+  check-test-files:
+    name: 检查测试文件完整性
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 检查测试文件存在
+        run: |
+          echo "检查核心测试文件..."
+
+          # 定义必需的测试文件列表
+          REQUIRED_FILES=(
+            "frontend/packages/core/tests/composables/useAuth.spec.ts"
+            "frontend/packages/core/tests/composables/useBooking.spec.ts"
+            "frontend/packages/core/tests/composables/useSeat.spec.ts"
+            "frontend/packages/core/tests/composables/useZone.spec.ts"
+          )
+
+          MISSING_FILES=()
+
+          for file in "${REQUIRED_FILES[@]}"; do
+            if [ ! -f "$file" ]; then
+              MISSING_FILES+=("$file")
+            fi
+          done
+
+          if [ ${#MISSING_FILES[@]} -gt 0 ]; then
+            echo "❌ 错误: 以下测试文件缺失:"
+            printf '%s\n' "${MISSING_FILES[@]}"
+            echo ""
+            echo "请恢复测试文件后再提交!"
+            exit 1
+          fi
+
+          echo "✅ 所有必需的测试文件都存在"
+
+  # 运行核心层测试
+  run-core-tests:
+    name: 运行核心层测试
+    runs-on: ubuntu-latest
+    needs: check-test-files
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+
+      - name: 安装依赖
+        working-directory: ./frontend
+        run: pnpm install --frozen-lockfile
+
+      - name: 运行测试
+        working-directory: ./frontend
+        run: pnpm --filter @zenspace/core test
+
+  # 零污染检查
+  zero-pollution-check:
+    name: 零污染检查
+    runs-on: ubuntu-latest
+    needs: check-test-files
+    steps:
+      - name: Checkout 代码
+        uses: actions/checkout@v4
+
+      - name: 检查平台 API 泄漏
+        run: |
+          echo "检查 core 层是否有平台特定 API 泄漏..."
+
+          # 搜索非法的平台 API 调用
+          PATTERNS=(
+            "uni\\."
+            "wx\\."
+            "my\\."
+            "swan\\."
+            "window\\."
+            "navigator\\."
+            "document\\."
+          )
+
+          VIOLATIONS=()
+
+          for pattern in "${PATTERNS[@]}"; do
+            # 在 core/src 目录中搜索
+            RESULT=$(grep -r "$pattern" frontend/packages/core/src/ --include="*.ts" --include="*.js" || true)
+
+            if [ ! -z "$RESULT" ]; then
+              # 排除注释中的匹配
+              if echo "$RESULT" | grep -v "^[^:]*://"; then
+                VIOLATIONS+=("$pattern")
+              fi
+            fi
+          done
+
+          if [ ${#VIOLATIONS[@]} -gt 0 ]; then
+            echo "❌ 错误: 发现平台特定 API 泄漏:"
+            printf '%s\n' "${VIOLATIONS[@]}"
+            echo ""
+            echo "Core 层严禁使用平台特定 API!"
+            echo "请通过 adapters 接口进行抽象。"
+            exit 1
+          fi
+
+          echo "✅ 零污染检查通过"

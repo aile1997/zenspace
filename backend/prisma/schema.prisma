@@ -1,0 +1,174 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+// 用户模型
+model User {
+  id           String    @id @default(uuid())
+  phone        String?   @unique
+  wechatOpenId String?   @unique @map("wechat_openid")
+  nickname     String?
+  avatar       String?
+  level        UserLevel @default(NORMAL)
+  points       Int       @default(0)
+  creditScore  Int       @default(100) @map("credit_score")
+  createdAt    DateTime  @default(now()) @map("created_at")
+  updatedAt    DateTime  @updatedAt @map("updated_at")
+
+  bookings     Booking[]
+  pointLogs    PointLog[]
+  achievements UserAchievement[]
+
+  @@map("users")
+}
+
+enum UserLevel {
+  NORMAL
+  VIP
+}
+
+// 区域模型
+model Zone {
+  id          String   @id @default(uuid())
+  name        String
+  floor       String
+  capacity    Int
+  hourlyPrice Decimal  @db.Decimal(10, 2) @map("hourly_price")
+  vipPrice    Decimal  @db.Decimal(10, 2) @map("vip_price")
+  tags        String[]
+  imageUrl    String?  @map("image_url")
+  createdAt   DateTime @default(now()) @map("created_at")
+  updatedAt   DateTime @updatedAt @map("updated_at")
+
+  seats       Seat[]
+
+  @@map("zones")
+}
+
+// 座位模型
+model Seat {
+  id     String     @id @default(uuid())
+  zoneId String     @map("zone_id")
+  label  String
+  type   SeatType   @default(STANDARD)
+  status SeatStatus @default(AVAILABLE)
+  x      Int
+  y      Int
+
+  zone     Zone      @relation(fields: [zoneId], references: [id])
+  bookings Booking[]
+
+  @@map("seats")
+}
+
+enum SeatType {
+  WINDOW
+  STANDARD
+  BOOTH
+}
+
+enum SeatStatus {
+  AVAILABLE
+  OCCUPIED
+  MAINTENANCE
+}
+
+// 预约模型
+model Booking {
+  id          String        @id @default(uuid())
+  userId      String        @map("user_id")
+  seatId      String        @map("seat_id")
+  bookingDate DateTime      @db.Date @map("booking_date")
+  startTime   String        @map("start_time") // 格式为 "HH:mm"
+  endTime     String        @map("end_time")   // 格式为 "HH:mm"
+  status      BookingStatus @default(PENDING)
+  checkInAt   DateTime?     @map("check_in_at")
+  checkOutAt  DateTime?     @map("check_out_at")
+  amount      Decimal       @db.Decimal(10, 2)
+  createdAt   DateTime      @default(now()) @map("created_at")
+  updatedAt   DateTime      @updatedAt @map("updated_at")
+
+  user    User      @relation(fields: [userId], references: [id])
+  seat    Seat      @relation(fields: [seatId], references: [id])
+  payment Payment?
+
+  @@map("bookings")
+}
+
+enum BookingStatus {
+  PENDING    // 待支付
+  CONFIRMED  // 已确认（已支付）
+  ACTIVE     // 进行中（已签到）
+  COMPLETED  // 已完成（已签退）
+  CANCELLED  // 已取消
+  NO_SHOW    // 爽约
+}
+
+// 支付模型
+model Payment {
+  id            String        @id @default(uuid())
+  bookingId     String        @unique @map("booking_id")
+  amount        Decimal       @db.Decimal(10, 2)
+  channel       String        // "wechat" | "alipay"
+  status        PaymentStatus @default(PENDING)
+  transactionId String?       @map("transaction_id")
+  createdAt     DateTime      @default(now()) @map("created_at")
+  updatedAt     DateTime      @updatedAt @map("updated_at")
+
+  booking Booking @relation(fields: [bookingId], references: [id])
+
+  @@map("payments")
+}
+
+enum PaymentStatus {
+  PENDING
+  PAID
+  REFUNDED
+}
+
+// 积分日志模型
+model PointLog {
+  id        String   @id @default(uuid())
+  userId    String   @map("user_id")
+  amount    Int
+  reason    String
+  createdAt DateTime @default(now()) @map("created_at")
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@map("point_logs")
+}
+
+// 成就定义模型
+model Achievement {
+  id          String   @id @default(uuid())
+  name        String
+  description String
+  icon        String
+  createdAt   DateTime @default(now()) @map("created_at")
+
+  users       UserAchievement[]
+
+  @@map("achievements")
+}
+
+// 用户成就关联模型
+model UserAchievement {
+  userId        String   @map("user_id")
+  achievementId String   @map("achievement_id")
+  unlockedAt    DateTime @default(now()) @map("unlocked_at")
+
+  user        User        @relation(fields: [userId], references: [id])
+  achievement Achievement @relation(fields: [achievementId], references: [id])
+
+  @@id([userId, achievementId])
+  @@map("user_achievements")
+}

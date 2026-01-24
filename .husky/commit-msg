@@ -1,0 +1,41 @@
+#!/usr/bin/env sh
+. "$(dirname -- "$0")/_/husky.sh"
+
+echo "📝 检查提交消息格式..."
+
+# 提交消息格式检查
+# 允许的格式:
+# - feat: 简短描述
+# - fix: 简短描述
+# - docs: 简短描述
+# - test: 简短描述
+# - chore: 简短描述
+# - refactor: 简短描述
+
+# 允许合并提交
+if echo "$1" | grep -qE "^Merge branch"; then
+  echo "✅ 合并提交，跳过检查"
+  exit 0
+fi
+
+# 允许回退提交
+if echo "$1" | grep -qE "^Revert"; then
+  echo "✅ 回退提交，跳过检查"
+  exit 0
+fi
+
+# 检查是否符合约定式提交格式
+if ! echo "$1" | grep -qE "^(feat|fix|docs|test|chore|refactor|style|perf|ci|build)(\(.+\))?: .{1,}"; then
+  echo "❌ 错误: 提交消息格式不符合约定式提交规范"
+  echo ""
+  echo "正确格式示例:"
+  echo "  feat: 添加用户登录功能"
+  echo "  fix(auth): 修复验证码验证问题"
+  echo "  docs: 更新 README"
+  echo "  test: 添加 useAuth 测试用例"
+  echo ""
+  echo "请参考: https://www.conventionalcommits.org/zh-hans/"
+  exit 1
+fi
+
+echo "✅ 提交消息格式检查通过"
