@@ -1,0 +1,266 @@
+{
+  "folders": [
+    {
+      "name": "🎨 Frontend - Core (业务逻辑层)",
+      "path": "frontend/packages/core"
+    },
+    {
+      "name": "🎨 Frontend - UI (视图层)",
+      "path": "frontend/packages/ui"
+    },
+    {
+      "name": "⚙️ Backend (后端服务)",
+      "path": "backend"
+    },
+    {
+      "name": "📐 Claude AI (架构系统)",
+      "path": ".claude"
+    },
+    {
+      "name": "📦 Root (根目录配置)",
+      "path": "."
+    }
+  ],
+  "settings": {
+    // 编辑器设置
+    "editor.formatOnSave": true,
+    "editor.defaultFormatter": "esbenp.prettier-vscode",
+    "editor.codeActionsOnSave": {
+      "source.fixAll.eslint": "explicit"
+    },
+
+    // 文件关联
+    "files.associations": {
+      "*.vue": "vue"
+    },
+
+    // 排除文件
+    "files.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/.next": true,
+      "**/coverage": true
+    },
+
+    // 搜索排除
+    "search.exclude": {
+      "**/node_modules": true,
+      "**/dist": true,
+      "**/coverage": true,
+      "**/*.lock": true
+    },
+
+    // TypeScript 设置
+    "typescript.tsdk": "frontend/packages/core/node_modules/typescript/lib",
+    "typescript.enablePromptUseWorkspaceTsdk": true,
+
+    // ESLint 工作区
+    "eslint.workingDirectories": [
+      "frontend/packages/core",
+      "frontend/packages/ui",
+      "backend"
+    ],
+
+    // Git 设置
+    "git.enableSmartCommit": true,
+    "git.confirmSync": false,
+
+    // 源代码管理分组
+    "scm.defaultViewMode": "tree",
+    "scm.repositories.visible": 5,
+
+    // 终端默认路径
+    "terminal.integrated.cwd": "${workspaceFolder}",
+
+    // 推荐的扩展
+    "extensions.ignoreRecommendations": false
+  },
+  "extensions": {
+    "recommendations": [
+      // Vue 相关
+      "vue.volar",
+      "vue.vscode-typescript-vue-plugin",
+
+      // 代码格式化
+      "esbenp.prettier-vscode",
+      "dbaeumer.vscode-eslint",
+
+      // Git 增强
+      "eamodio.gitlens",
+      "mhutchie.git-graph",
+
+      // 通用工具
+      "streetsidesoftware.code-spell-checker",
+      "wayou.vscode-todo-highlight",
+      "gruntfuggly.todo-tree",
+
+      // TypeScript
+      "yoavbls.pretty-ts-errors",
+
+      // Prisma
+      "prisma.prisma",
+
+      // UniApp
+      "uni-helper.uni-helper-vscode"
+    ]
+  },
+  "launch": {
+    "version": "0.2.0",
+    "configurations": [
+      {
+        "name": "🎨 Frontend - H5 Dev",
+        "type": "chrome",
+        "request": "launch",
+        "url": "http://localhost:5173",
+        "webRoot": "${workspaceFolder}/frontend/packages/ui",
+        "sourceMaps": true
+      },
+      {
+        "name": "⚙️ Backend - Debug",
+        "type": "node",
+        "request": "launch",
+        "name": "Debug NestJS",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["run", "start:debug"],
+        "cwd": "${workspaceFolder}/backend",
+        "console": "integratedTerminal",
+        "restart": true,
+        "protocol": "inspector",
+        "sourceMaps": true
+      },
+      {
+        "name": "🧪 Frontend - Core Tests",
+        "type": "node",
+        "request": "launch",
+        "name": "Vitest Tests",
+        "runtimeExecutable": "pnpm",
+        "runtimeArgs": ["run", "test"],
+        "cwd": "${workspaceFolder}/frontend/packages/core",
+        "console": "integratedTerminal"
+      }
+    ],
+    "compounds": [
+      {
+        "name": "🚀 Full Stack Debug",
+        "configurations": [
+          "🎨 Frontend - H5 Dev",
+          "⚙️ Backend - Debug"
+        ],
+        "presentation": {
+          "hidden": false,
+          "group": "fullstack",
+          "order": 1
+        }
+      }
+    ]
+  },
+  "tasks": {
+    "version": "2.0.0",
+    "tasks": [
+      {
+        "label": "🎨 Frontend: Install",
+        "type": "shell",
+        "command": "pnpm install",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "🎨 Frontend: Dev (H5)",
+        "type": "shell",
+        "command": "pnpm run dev:h5",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend/packages/ui"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        },
+        "isBackground": true
+      },
+      {
+        "label": "🎨 Frontend: Test",
+        "type": "shell",
+        "command": "pnpm run test",
+        "options": {
+          "cwd": "${workspaceFolder}/frontend/packages/core"
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "⚙️ Backend: Install",
+        "type": "shell",
+        "command": "pnpm install",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "⚙️ Backend: Dev",
+        "type": "shell",
+        "command": "pnpm run start:dev",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        },
+        "isBackground": true
+      },
+      {
+        "label": "⚙️ Backend: Test",
+        "type": "shell",
+        "command": "pnpm run test",
+        "options": {
+          "cwd": "${workspaceFolder}/backend"
+        },
+        "group": "test",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "🚀 Full Stack: Install All",
+        "dependsOn": [
+          "🎨 Frontend: Install",
+          "⚙️ Backend: Install"
+        ],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      },
+      {
+        "label": "🚀 Full Stack: Dev",
+        "dependsOn": [
+          "🎨 Frontend: Dev (H5)",
+          "⚙️ Backend: Dev"
+        ],
+        "group": "build",
+        "presentation": {
+          "reveal": "always",
+          "panel": "dedicated"
+        }
+      }
+    ]
+  }
+}
