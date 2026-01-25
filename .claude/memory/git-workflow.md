@@ -1,6 +1,6 @@
-# ZenSpace Git 分支工作流
+# ZenSpace Git 分支工作流（简化版）
 
-**版本**: v1.0  
+**版本**: v2.0  
 **制定时间**: 2026-01-25  
 **制定人**: Architect (Antigravity)
 
@@ -10,20 +10,18 @@
 
 1. **main 分支保护**: main 分支只接受 review 通过的高质量代码
 2. **develop 分支开发**: 所有日常开发提交到 develop 分支
-3. **feature 分支隔离**: 大功能使用独立的 feature 分支
+3. **claude 分支架构**: Architect 专用，架构文档变更
 4. **review 后合并**: Architect review 通过后才能合并到 main
-5. **architecture 分支同步**: 架构文档变更同步到 claude/architecture-docs-* 分支
 
 ---
 
-## 📊 分支架构
+## 📊 分支架构（仅 3 个分支）
 
 ```
 main (受保护的生产分支)
-  ├── develop (日常开发分支)
-  │     ├── feature/auth-api (功能分支)
-  │     ├── feature/booking-system (功能分支)
-  │     └── feature/ui-polish (功能分支)
+  │
+  ├── develop (日常开发分支 - Builder 工作区)
+  │     └── 前端 + 后端所有开发工作
   │
   └── claude/architecture-docs-* (Architect 架构分支)
         └── 架构设计、文档、Tickets
@@ -38,10 +36,10 @@ main (受保护的生产分支)
 **用途**: 生产就绪的稳定代码
 
 **规则**:
-- ✅ 只接受来自 `develop` 的 PR 合并
-- ✅ 必须通过 Architect review
+- ✅ 只接受来自 `develop` 的合并
+- ✅ 必须通过 Architect review（评分 ≥ 4.0）
 - ✅ 必须通过所有测试
-- ❌ 禁止直接 push（除非紧急修复）
+- ❌ 禁止直接 push（除紧急情况）
 - ❌ 禁止 force push
 
 **提交要求**:
@@ -57,10 +55,10 @@ main (受保护的生产分支)
 
 **规则**:
 - ✅ Builder 的主要工作分支
-- ✅ 可以直接 push（小改动）
-- ✅ 大功能从 feature/* 合并而来
-- ✅ 允许存在小 bug，但不能阻塞主流程
-- ⚠️ 定期合并到 main（通过 PR + review）
+- ✅ 可以直接 push
+- ✅ 允许存在小 bug，快速迭代
+- ✅ 前端和后端开发都在这个分支
+- ⚠️ 定期合并到 main（通过 review）
 
 **命名**: `develop`
 
@@ -75,44 +73,13 @@ git push -u origin develop
 
 ---
 
-### 3. feature/* 分支
-
-**用途**: 独立功能开发
-
-**规则**:
-- ✅ 从 `develop` 创建
-- ✅ 开发完成后合并回 `develop`
-- ✅ 合并后可以删除
-- ⚠️ 功能完成前不要合并到 develop
-
-**命名规范**:
-```
-feature/<ticket-id>-<简短描述>
-
-示例:
-- feature/ticket-002-auth-api
-- feature/ticket-004-ui-polish
-- feature/ticket-005-booking-system
-```
-
-**创建方式**:
-```bash
-# 从 develop 创建 feature 分支
-git checkout develop
-git pull origin develop
-git checkout -b feature/ticket-002-auth-api
-git push -u origin feature/ticket-002-auth-api
-```
-
----
-
-### 4. claude/architecture-docs-* 分支
+### 3. claude/* 分支
 
 **用途**: Architect 专用，用于架构设计和文档
 
 **规则**:
 - ✅ Architect 专用分支
-- ✅ 只包含 `.claude/` 和文档变更
+- ✅ 只包含 `.claude/` 目录的变更和文档
 - ✅ review 通过后合并到 main
 - ✅ 分支名必须以 `claude/` 开头，以 session ID 结尾
 
@@ -127,52 +94,32 @@ claude/<描述>-<sessionId>
 
 ---
 
-### 5. hotfix/* 分支（紧急修复）
-
-**用途**: 生产环境紧急 bug 修复
-
-**规则**:
-- ✅ 从 `main` 创建
-- ✅ 修复后同时合并到 `main` 和 `develop`
-- ⚠️ 仅用于紧急修复，非紧急问题走正常流程
-
-**命名规范**:
-```
-hotfix/<issue-id>-<简短描述>
-
-示例:
-- hotfix/critical-jwt-leak
-- hotfix/db-connection-pool
-```
-
----
-
 ## 🔄 标准工作流
 
-### 场景 1: Builder 开发新功能
+### 场景 1: Builder 日常开发（前端 + 后端）
 
 ```bash
-# 1. 从 develop 创建 feature 分支
+# 1. 切换到 develop 分支
 git checkout develop
 git pull origin develop
-git checkout -b feature/ticket-005-booking-api
-git push -u origin feature/ticket-005-booking-api
 
 # 2. 开发并提交（TDD 循环）
 # Red -> Green -> Refactor
-git add backend/src/modules/booking/
-git commit -m "feat(booking): 实现预约创建 API"
+
+# 前端开发
+git add frontend/
+git commit -m "feat(ui): 完成首页座位选择组件"
 git push
 
-# 3. 功能完成后，合并到 develop
-git checkout develop
-git pull origin develop
-git merge feature/ticket-005-booking-api
-git push origin develop
+# 后端开发
+git add backend/
+git commit -m "test(auth): 添加登录 API 测试"
+git add backend/
+git commit -m "feat(auth): 实现登录 API"
+git push
 
-# 4. 删除 feature 分支（可选）
-git branch -d feature/ticket-005-booking-api
-git push origin --delete feature/ticket-005-booking-api
+# 3. 持续在 develop 分支迭代
+# 可以多次提交，不需要创建额外分支
 ```
 
 ---
@@ -190,16 +137,19 @@ pnpm run test        # 运行单元测试
 pnpm run test:e2e    # 运行集成测试
 pnpm run lint        # 代码检查
 
+cd ../frontend/packages/core
+pnpm run test        # 前端测试
+
 # 3. 创建 code review 报告
 # 编写 .claude/memory/code_review_<date>.md
 
-# 4. 如果 review 通过，合并到 main
+# 4. 如果 review 通过（评分 ≥ 4.0），合并到 main
 git checkout main
 git pull origin main
 git merge develop
 git push origin main
 
-# 5. 同步到 architecture 分支
+# 5. 同步到当前 architecture 分支
 git checkout claude/architecture-docs-LMh44
 git merge main
 git push origin claude/architecture-docs-LMh44
@@ -210,8 +160,9 @@ git push origin claude/architecture-docs-LMh44
 ### 场景 3: Architect 创建 Tickets 和文档
 
 ```bash
-# 1. 从当前 architecture 分支或创建新分支
-git checkout -b claude/ticket-creation-<sessionId>
+# 1. 在当前 architecture 分支工作
+git checkout claude/architecture-docs-LMh44
+git pull origin claude/architecture-docs-LMh44
 
 # 2. 创建 Ticket 和架构文档
 # 编辑 .claude/tickets/*.md
@@ -220,47 +171,32 @@ git checkout -b claude/ticket-creation-<sessionId>
 # 3. 提交架构变更
 git add .claude/
 git commit -m "docs(architect): 创建 Ticket-006 预约管理 API"
-git push -u origin claude/ticket-creation-<sessionId>
+git push origin claude/architecture-docs-LMh44
 
-# 4. 创建 PR 合并到 main
-gh pr create --title "docs: 创建预约管理 Ticket" --base main
-
-# 5. 自行合并（Architect 有权限）
-gh pr merge --squash
+# 4. 如果需要，可以合并到 main
+git checkout main
+git merge claude/architecture-docs-LMh44
+git push origin main
 ```
 
 ---
 
-### 场景 4: 紧急修复生产 Bug
+### 场景 4: 紧急修复（直接在 main）
 
 ```bash
-# 1. 从 main 创建 hotfix 分支
+# 仅用于紧急的生产 bug 修复
 git checkout main
 git pull origin main
-git checkout -b hotfix/critical-jwt-leak
 
-# 2. 修复 bug 并测试
-# 修复代码...
-pnpm run test
-
-# 3. 提交修复
+# 修复 bug
 git add .
 git commit -m "fix(auth): 修复 JWT secret 泄露漏洞"
-git push -u origin hotfix/critical-jwt-leak
-
-# 4. 合并到 main
-git checkout main
-git merge hotfix/critical-jwt-leak
 git push origin main
 
-# 5. 合并到 develop
+# 同步回 develop
 git checkout develop
-git merge hotfix/critical-jwt-leak
+git merge main
 git push origin develop
-
-# 6. 删除 hotfix 分支
-git branch -d hotfix/critical-jwt-leak
-git push origin --delete hotfix/critical-jwt-leak
 ```
 
 ---
@@ -377,80 +313,55 @@ Architect review 代码时检查以下项目：
 
 ---
 
-## 🔐 分支保护规则
+## 📚 典型工作日示例
 
-建议在 GitHub 设置以下保护规则：
-
-### main 分支保护
-
-```yaml
-Branch protection rules for 'main':
-  - Require pull request before merging
-  - Require approvals: 1 (Architect)
-  - Require status checks to pass
-  - Require branches to be up to date
-  - Do not allow force pushes
-  - Do not allow deletions
-```
-
-### develop 分支保护
-
-```yaml
-Branch protection rules for 'develop':
-  - Require status checks to pass (CI tests)
-  - Allow force pushes (for rebase)
-  - Allow deletions: No
-```
-
----
-
-## 📚 示例场景总结
-
-### Builder 的典型一天
+### Builder 的一天
 
 ```bash
-# 早上：查看 Ticket，开始新功能
+# 早上：开始工作
 git checkout develop
 git pull origin develop
-git checkout -b feature/ticket-006-booking-api
 
-# 上午：TDD 循环开发
-git add . && git commit -m "test(booking): 添加创建预约测试用例"
-git add . && git commit -m "feat(booking): 实现创建预约 API"
-git add . && git commit -m "refactor(booking): 优化预约时间验证逻辑"
+# 上午：开发后端认证测试
+git add backend/src/modules/auth/*.spec.ts
+git commit -m "test(auth): 添加 AuthService 单元测试"
+git add backend/src/modules/auth/auth.service.ts
+git commit -m "fix(auth): 修复验证码过期判断逻辑"
 git push
 
-# 下午：功能完成，合并到 develop
-git checkout develop
-git merge feature/ticket-006-booking-api
+# 下午：开发前端 UI
+git add frontend/packages/ui/src/pages/home/
+git commit -m "feat(ui): 完成首页座位选择网格组件"
+git push
+
+# 晚上：完成一天工作
 git push origin develop
 
-# 通知 Architect review
-# 发消息："@Architect Ticket-006 已完成，请 review"
+# 通知 Architect
+# 发消息："@Architect develop 分支已更新，Ticket-005 进度 80%"
 ```
 
 ### Architect 的 Review 流程
 
 ```bash
-# 收到通知后，切换到 develop 分支
+# 收到通知后
 git checkout develop
 git pull origin develop
 
 # 运行测试
-cd backend
-pnpm run test
-pnpm run lint
+cd backend && pnpm run test
+cd ../frontend/packages/core && pnpm run test
 
 # 阅读代码，创建 review 报告
 code .claude/memory/code_review_2026-01-25.md
 
-# Review 通过，合并到 main
+# Review 通过（评分 4.2/5.0）
 git checkout main
 git merge develop
 git push origin main
 
 # 反馈给 Builder
-# 发消息："✅ Ticket-006 review 通过，已合并到 main"
+# 发消息："✅ Review 通过（4.2/5.0），已合并到 main。建议：可以进一步优化错误处理"
 ```
 
 ---
@@ -472,9 +383,6 @@ git log --oneline --graph -20
 # 同步远程分支
 git fetch origin
 
-# 删除已合并的本地分支
-git branch --merged | grep -v "\*\|main\|develop" | xargs -n 1 git branch -d
-
 # 查看分支差异
 git diff main..develop
 
@@ -488,21 +396,32 @@ git log main..develop --oneline
 
 ### 核心要点
 
-1. **develop 是日常开发主分支**，Builder 主要在这里工作
-2. **feature/* 用于大功能隔离**，完成后合并到 develop
-3. **main 受保护**，只接受 review 通过的代码
-4. **Architect review 是质量门**，评分 ≥ 4.0 才能合并
-5. **遵循 Conventional Commits**，保持提交历史清晰
+1. **只需 3 个分支** - main、develop、claude/*
+2. **develop 是主战场** - Builder 所有开发都在 develop
+3. **main 受保护** - 只接受 review 通过的代码（≥ 4.0）
+4. **claude/* 用于架构** - Architect 的文档和 Tickets
+5. **遵循 Conventional Commits** - 保持提交历史清晰
 
 ### 优势
 
+- ✅ **简单直观**：只有 3 个分支，易于理解
 - ✅ **代码质量有保障**：main 分支始终是高质量代码
-- ✅ **开发效率高**：Builder 可以在 develop 快速迭代
+- ✅ **开发效率高**：Builder 在 develop 快速迭代，无需管理多个分支
 - ✅ **风险可控**：问题代码不会进入 main
-- ✅ **历史清晰**：Git 历史结构清晰，易于追溯
-- ✅ **团队协作流畅**：角色分工明确
+- ✅ **历史清晰**：Git 历史结构简单，易于追溯
+
+### 与复杂工作流的对比
+
+| 特性 | 简化版（3分支） | 复杂版（5+分支） |
+|------|----------------|-----------------|
+| 分支数量 | 3 个 | 5+ 个 |
+| 学习成本 | 低 | 高 |
+| 管理成本 | 低 | 高 |
+| 适用团队 | 小团队（2-5人） | 大团队（10+人） |
+| 灵活性 | 高 | 中 |
 
 ---
 
 **文档维护者**: Architect (Antigravity)  
-**最后更新**: 2026-01-25
+**最后更新**: 2026-01-25  
+**版本**: v2.0（简化版）
