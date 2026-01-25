@@ -1,6 +1,10 @@
 {
   "folders": [
     {
+      "name": "📦 ZenSpace (项目根目录)",
+      "path": "."
+    },
+    {
       "name": "🎨 Frontend - Core (业务逻辑层)",
       "path": "frontend/packages/core"
     },
@@ -11,14 +15,6 @@
     {
       "name": "⚙️ Backend (后端服务)",
       "path": "backend"
-    },
-    {
-      "name": "📐 Claude AI (架构系统)",
-      "path": ".claude"
-    },
-    {
-      "name": "📦 Root (根目录配置)",
-      "path": "."
     }
   ],
   "settings": {
