@@ -42,7 +42,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -51,7 +51,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A2',
           type: 'STANDARD',
-          status: 'OCCUPIED',
+          status: 'occupied',
           x: 1,
           y: 0,
         },
@@ -60,7 +60,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'B1',
           type: 'BOOTH',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 1,
         },
@@ -125,7 +125,7 @@ describe('useSeat', () => {
         zoneId: 'zone-1',
         label: 'A1',
         type: 'WINDOW',
-        status: 'AVAILABLE',
+        status: 'available',
         x: 0,
         y: 0,
       };
@@ -154,7 +154,7 @@ describe('useSeat', () => {
         zoneId: 'zone-1',
         label: 'A1',
         type: 'WINDOW',
-        status: 'AVAILABLE',
+        status: 'available',
         x: 0,
         y: 0,
       };
@@ -167,13 +167,13 @@ describe('useSeat', () => {
       seats.value = [seat1];
 
       // 模拟座位被占用
-      const updatedSeat: Seat = { ...seat1, status: 'OCCUPIED' };
+      const updatedSeat: Seat = { ...seat1, status: 'occupied' };
       vi.mocked(mockHttp.get).mockResolvedValue(updatedSeat);
 
       await fetchSeatStatus('seat-1');
 
       // 验证座位列表已更新
-      expect(seats.value[0].status).toBe('OCCUPIED');
+      expect(seats.value[0].status).toBe('occupied');
     });
   });
 
@@ -185,7 +185,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -194,7 +194,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A2',
           type: 'STANDARD',
-          status: 'OCCUPIED',
+          status: 'occupied',
           x: 1,
           y: 0,
         },
@@ -216,7 +216,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'OCCUPIED',
+          status: 'occupied',
           x: 0,
           y: 0,
         },
@@ -226,8 +226,7 @@ describe('useSeat', () => {
 
       seats.value = mockSeats;
 
-      selectSeat('seat-1');
-
+      expect(() => selectSeat('seat-1')).toThrow('座位不可选');
       expect(selectedSeatId.value).toBeNull();
     });
 
@@ -238,7 +237,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'MAINTENANCE',
+          status: 'maintenance',
           x: 0,
           y: 0,
         },
@@ -248,8 +247,7 @@ describe('useSeat', () => {
 
       seats.value = mockSeats;
 
-      selectSeat('seat-1');
-
+      expect(() => selectSeat('seat-1')).toThrow('座位不可选');
       expect(selectedSeatId.value).toBeNull();
     });
 
@@ -260,7 +258,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -269,7 +267,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A2',
           type: 'STANDARD',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 1,
           y: 0,
         },
@@ -295,7 +293,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -317,9 +315,23 @@ describe('useSeat', () => {
 
   describe('clearSelection', () => {
     it('应该清除座位选择', () => {
-      const { selectSeat, clearSelection, selectedSeatId } = useSeat({
+      const mockSeats: Seat[] = [
+        {
+          id: 'seat-1',
+          zoneId: 'zone-1',
+          label: 'A1',
+          type: 'WINDOW',
+          status: 'available',
+          x: 0,
+          y: 0,
+        },
+      ];
+
+      const { selectSeat, clearSelection, selectedSeatId, seats } = useSeat({
         http: mockHttp,
       });
+
+      seats.value = mockSeats;
 
       // 选择座位
       selectSeat('seat-1');
@@ -339,7 +351,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -373,7 +385,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A1',
           type: 'WINDOW',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 0,
         },
@@ -382,7 +394,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'A2',
           type: 'STANDARD',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 1,
           y: 0,
         },
@@ -391,7 +403,7 @@ describe('useSeat', () => {
           zoneId: 'zone-1',
           label: 'B1',
           type: 'BOOTH',
-          status: 'AVAILABLE',
+          status: 'available',
           x: 0,
           y: 1,
         },
@@ -421,20 +433,20 @@ describe('useSeat', () => {
   describe('座位状态统计', () => {
     it('应该正确统计各状态座位数量', () => {
       const mockSeats: Seat[] = [
-        { id: 's1', zoneId: 'z1', label: 'A1', type: 'WINDOW', status: 'AVAILABLE', x: 0, y: 0 },
-        { id: 's2', zoneId: 'z1', label: 'A2', type: 'STANDARD', status: 'AVAILABLE', x: 1, y: 0 },
-        { id: 's3', zoneId: 'z1', label: 'A3', type: 'WINDOW', status: 'OCCUPIED', x: 2, y: 0 },
-        { id: 's4', zoneId: 'z1', label: 'B1', type: 'BOOTH', status: 'OCCUPIED', x: 0, y: 1 },
-        { id: 's5', zoneId: 'z1', label: 'B2', type: 'STANDARD', status: 'MAINTENANCE', x: 1, y: 1 },
+        { id: 's1', zoneId: 'z1', label: 'A1', type: 'WINDOW', status: 'available', x: 0, y: 0 },
+        { id: 's2', zoneId: 'z1', label: 'A2', type: 'STANDARD', status: 'available', x: 1, y: 0 },
+        { id: 's3', zoneId: 'z1', label: 'A3', type: 'WINDOW', status: 'occupied', x: 2, y: 0 },
+        { id: 's4', zoneId: 'z1', label: 'B1', type: 'BOOTH', status: 'occupied', x: 0, y: 1 },
+        { id: 's5', zoneId: 'z1', label: 'B2', type: 'STANDARD', status: 'maintenance', x: 1, y: 1 },
       ];
 
       const { seats } = useSeat({ http: mockHttp });
 
       seats.value = mockSeats;
 
-      const availableCount = seats.value.filter((s) => s.status === 'AVAILABLE').length;
-      const occupiedCount = seats.value.filter((s) => s.status === 'OCCUPIED').length;
-      const maintenanceCount = seats.value.filter((s) => s.status === 'MAINTENANCE').length;
+      const availableCount = seats.value.filter((s) => s.status === 'available').length;
+      const occupiedCount = seats.value.filter((s) => s.status === 'occupied').length;
+      const maintenanceCount = seats.value.filter((s) => s.status === 'maintenance').length;
 
       expect(availableCount).toBe(2);
       expect(occupiedCount).toBe(2);
@@ -445,8 +457,8 @@ describe('useSeat', () => {
   describe('实时状态更新模拟', () => {
     it('应该模拟座位状态变化（轮询效果）', async () => {
       const initialSeats: Seat[] = [
-        { id: 'seat-1', zoneId: 'zone-1', label: 'A1', type: 'WINDOW', status: 'AVAILABLE', x: 0, y: 0 },
-        { id: 'seat-2', zoneId: 'zone-1', label: 'A2', type: 'STANDARD', status: 'AVAILABLE', x: 1, y: 0 },
+        { id: 'seat-1', zoneId: 'zone-1', label: 'A1', type: 'WINDOW', status: 'available', x: 0, y: 0 },
+        { id: 'seat-2', zoneId: 'zone-1', label: 'A2', type: 'STANDARD', status: 'available', x: 1, y: 0 },
       ];
 
       // 初始状态
@@ -456,19 +468,19 @@ describe('useSeat', () => {
 
       await fetchZoneSeats('zone-1');
 
-      expect(seats.value[0].status).toBe('AVAILABLE');
+      expect(seats.value[0].status).toBe('available');
 
       // 模拟状态变化
       const updatedSeats: Seat[] = [
-        { id: 'seat-1', zoneId: 'zone-1', label: 'A1', type: 'WINDOW', status: 'OCCUPIED', x: 0, y: 0 },
-        { id: 'seat-2', zoneId: 'zone-1', label: 'A2', type: 'STANDARD', status: 'AVAILABLE', x: 1, y: 0 },
+        { id: 'seat-1', zoneId: 'zone-1', label: 'A1', type: 'WINDOW', status: 'occupied', x: 0, y: 0 },
+        { id: 'seat-2', zoneId: 'zone-1', label: 'A2', type: 'STANDARD', status: 'available', x: 1, y: 0 },
       ];
 
       vi.mocked(mockHttp.get).mockResolvedValue(updatedSeats);
 
       await fetchZoneSeats('zone-1');
 
-      expect(seats.value[0].status).toBe('OCCUPIED');
+      expect(seats.value[0].status).toBe('occupied');
     });
   });
 });

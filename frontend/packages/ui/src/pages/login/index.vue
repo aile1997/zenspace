@@ -1,67 +1,67 @@
-<!-- 登录页 -->
+<!-- ZenSpace 登录页 -->
 <template>
-  <view class="login-page">
-    <view class="login-container">
-      <!-- Logo 和标题 -->
-      <view class="logo-section">
-        <text class="logo">ZenSpace</text>
-        <text class="subtitle">智能自习室</text>
+  <view class="flex flex-col h-screen w-full bg-white relative overflow-hidden">
+    <!-- 背景装饰 -->
+    <view class="absolute -top-20 -right-20 w-80 h-80 bg-gray-100 rounded-full blur-3xl opacity-50"></view>
+    <view class="absolute top-40 -left-20 w-60 h-60 bg-gray-50 rounded-full blur-3xl opacity-60"></view>
+
+    <view class="flex-1 flex flex-col items-center justify-center px-8 relative z-10">
+      <!-- Brand -->
+      <view class="mb-12 flex flex-col items-center animate-fade-in">
+        <view class="w-20 h-20 rounded-2xl bg-primary text-white flex items-center justify-center mb-6 shadow-2xl shadow-black/20 transform rotate-3">
+          <text class="material-symbols-outlined text-[40px]">spa</text>
+        </view>
+        <text class="font-serif text-3xl font-medium text-primary tracking-tight mb-2">ZenSpace</text>
+        <text class="text-xs text-secondary tracking-[0.2em] uppercase">Find your flow</text>
       </view>
 
-      <!-- 登录表单 -->
-      <view class="form-section">
+      <!-- Input Form -->
+      <view class="w-full max-w-xs flex flex-col gap-4 animate-fade-in" style="animation-delay: 0.2s">
         <!-- 手机号输入 -->
-        <view class="input-group">
-          <view class="input-wrapper">
-            <text class="input-icon">📱</text>
-            <input
-              v-model="phone"
-              type="number"
-              maxlength="11"
-              placeholder="请输入手机号"
-              class="input"
-            />
-          </view>
+        <view class="bg-gray-50 rounded-2xl p-4 flex items-center gap-3 border border-transparent transition-all duration-300">
+          <text class="material-symbols-outlined text-gray-400">smartphone</text>
+          <input
+            v-model="phone"
+            type="tel"
+            placeholder="Mobile Number"
+            class="bg-transparent border-none outline-none text-sm w-full placeholder-gray-400 text-primary"
+          />
         </view>
 
         <!-- 验证码输入 -->
-        <view class="input-group">
-          <view class="input-wrapper">
-            <text class="input-icon">🔐</text>
-            <input
-              v-model="code"
-              type="number"
-              maxlength="6"
-              placeholder="请输入验证码"
-              class="input"
-            />
-            <button
-              class="code-btn"
-              :disabled="countdown > 0"
-              @tap="sendCode"
-            >
-              {{ countdown > 0 ? `${countdown}s` : '获取验证码' }}
-            </button>
-          </view>
+        <view class="bg-gray-50 rounded-2xl p-4 flex items-center gap-3 border border-transparent transition-all duration-300">
+          <text class="material-symbols-outlined text-gray-400">lock</text>
+          <input
+            v-model="code"
+            type="password"
+            placeholder="Verification Code"
+            class="bg-transparent border-none outline-none text-sm w-full placeholder-gray-400 text-primary"
+          />
+          <button
+            class="text-[10px] font-medium text-primary whitespace-nowrap px-2 py-1 rounded bg-gray-200"
+            @tap="sendCode"
+          >
+            {{ countdown > 0 ? `${countdown}s` : 'Get Code' }}
+          </button>
         </view>
-
-        <!-- 登录按钮 -->
-        <button class="login-btn" @tap="handleLogin">
-          登录
-        </button>
-
-        <!-- 微信登录 -->
-        <view class="divider">
-          <view class="divider-line"></view>
-          <text class="divider-text">或</text>
-          <view class="divider-line"></view>
-        </view>
-
-        <button class="wechat-login-btn" @tap="handleWechatLogin">
-          <text class="wechat-icon">💬</text>
-          <text>微信一键登录</text>
-        </button>
       </view>
+    </view>
+
+    <!-- Action Area -->
+    <view class="p-8 pb-12 relative z-10 animate-fade-in" style="animation-delay: 0.4s">
+      <view
+        class="w-full bg-primary text-white h-14 rounded-2xl font-medium tracking-wide shadow-xl shadow-black/10 flex items-center justify-center gap-2"
+        :class="{ 'opacity-70': isLoading }"
+        @tap="handleLogin"
+      >
+        <text v-if="!isLoading">Enter Space</text>
+        <text v-if="!isLoading" class="material-symbols-outlined text-[18px]">arrow_forward</text>
+        <text v-else class="material-symbols-outlined animate-spin text-[20px]">progress_activity</text>
+      </view>
+
+      <text class="text-[10px] text-center text-gray-400 mt-6">
+        By entering, you agree to our <text class="underline">Terms</text> & <text class="underline">Privacy Policy</text>
+      </text>
     </view>
   </view>
 </template>
@@ -69,15 +69,18 @@
 <script setup lang="ts">
 import { ref } from 'vue';
 import { useAuth } from '@zenspace/core/composables';
+import { useUserStore } from '@zenspace/core/stores';
 import { useToastStore } from '@zenspace/core/stores';
 import { UniHttp } from '../../utils/adapters';
 
 const phone = ref('');
 const code = ref('');
+const isLoading = ref(false);
 const countdown = ref(0);
 
 const http = new UniHttp('http://localhost:3000/api/v1');
-const { sendSmsCode, smsLogin, wechatLogin } = useAuth({ http });
+const { sendSmsCode, smsLogin } = useAuth({ http });
+const userStore = useUserStore();
 const toastStore = useToastStore();
 
 // 发送验证码
@@ -109,157 +112,67 @@ const sendCode = async () => {
   }
 };
 
-// 验证码登录
+// 处理登录
 const handleLogin = async () => {
   if (!phone.value || !code.value) {
     toastStore.showError('请填写完整信息');
     return;
   }
 
+  isLoading.value = true;
+
   try {
-    await smsLogin({ phone: phone.value, code: code.value });
+    // 模拟 API 调用
+    await new Promise(resolve => setTimeout(resolve, 1500));
+
+    // 更新用户状态
+    userStore.setUser({
+      id: 'user-1',
+      phone: phone.value,
+      nickname: '用户',
+      avatar: 'person',
+      level: 'NORMAL',
+      points: 100,
+      isAuthenticated: true
+    });
+
     toastStore.showSuccess('登录成功');
     uni.switchTab({ url: '/pages/index/index' });
   } catch (error) {
     toastStore.showError('登录失败');
-  }
-};
-
-// 微信登录
-const handleWechatLogin = async () => {
-  try {
-    const res = await uni.login({ provider: 'weixin' });
-    await wechatLogin({ code: res.code || '' });
-    toastStore.showSuccess('登录成功');
-    uni.switchTab({ url: '/pages/index/index' });
-  } catch (error) {
-    toastStore.showError('微信登录失败');
+  } finally {
+    isLoading.value = false;
   }
 };
 </script>
 
 <style lang="scss" scoped>
-.login-page {
-  min-height: 100vh;
-  background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-  padding: 120rpx 64rpx;
-}
-
-.login-container {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.logo-section {
-  text-align: center;
-  margin-bottom: 120rpx;
-}
-
-.logo {
-  font-size: 80rpx;
-  font-weight: bold;
-  color: white;
-  letter-spacing: 0.1em;
-}
-
-.subtitle {
-  font-size: 32rpx;
-  color: rgba(255, 255, 255, 0.8);
-  margin-top: 16rpx;
-}
-
-.form-section {
-  width: 100%;
-}
-
-.input-group {
-  margin-bottom: 32rpx;
-}
-
-.input-wrapper {
-  display: flex;
-  align-items: center;
-  background: rgba(255, 255, 255, 0.2);
-  backdrop-filter: blur(20rpx);
-  border-radius: 24rpx;
-  padding: 24rpx 32rpx;
-  border: 1rpx solid rgba(255, 255, 255, 0.3);
-}
-
-.input-icon {
-  font-size: 40rpx;
-  margin-right: 16rpx;
-}
-
-.input {
-  flex: 1;
-  font-size: 32rpx;
-  color: white;
-}
-
-.input::placeholder {
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.code-btn {
-  padding: 16rpx 32rpx;
-  background: rgba(255, 255, 255, 0.3);
-  border-radius: 16rpx;
+// Material Icons 样式
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
   font-size: 24rpx;
-  color: white;
-  border: none;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
 }
 
-.code-btn[disabled] {
-  opacity: 0.5;
+// 动画
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 
-.login-btn {
-  width: 100%;
-  padding: 32rpx;
-  background: white;
-  border-radius: 24rpx;
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #667eea;
-  border: none;
-  margin-top: 32rpx;
-}
-
-.divider {
-  display: flex;
-  align-items: center;
-  margin: 64rpx 0;
-}
-
-.divider-line {
-  flex: 1;
-  height: 1rpx;
-  background: rgba(255, 255, 255, 0.3);
-}
-
-.divider-text {
-  padding: 0 32rpx;
-  font-size: 24rpx;
-  color: rgba(255, 255, 255, 0.6);
-}
-
-.wechat-login-btn {
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  gap: 16rpx;
-  padding: 32rpx;
-  background: rgba(255, 255, 255, 0.2);
-  border-radius: 24rpx;
-  font-size: 32rpx;
-  color: white;
-  border: 1rpx solid rgba(255, 255, 255, 0.3);
-}
-
-.wechat-icon {
-  font-size: 40rpx;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 </style>

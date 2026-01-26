@@ -1,0 +1,155 @@
+/**
+ * ZenSpace 全局样式变量
+ *
+ * 参考 old-react-backup 的 Tailwind 配置和设计规范
+ * 所有单位使用 rpx 以适配 UniApp 多端
+ */
+
+// ========== 颜色系统 ==========
+// 主色调 - 黑色系
+$color-primary: #1a1a1a;
+$color-primary-light: #2a2a2a;
+$color-primary-lighter: #3a3a3a;
+
+// 次要色 - 灰色系
+$color-secondary: #4a4a4a;
+$color-secondary-light: #6a6a6a;
+$color-secondary-lighter: #8a8a8a;
+
+// 强调色 - iOS 灰色
+$color-accent: #8E8E93;
+
+// 背景色
+$color-bg-page: #f9f9f9;
+$color-bg-card: #ffffff;
+$color-bg-input: #f5f5f5;
+
+// 状态色
+$color-success: #34c759;
+$color-success-light: #30d158;
+$color-warning: #ff9500;
+$color-error: #ff3b30;
+$color-info: #007aff;
+
+// 边框和分隔线
+$color-border-light: rgba(0, 0, 0, 0.03);
+$color-border-base: rgba(0, 0, 0, 0.08);
+$color-border-medium: rgba(0, 0, 0, 0.12);
+
+// 文字颜色
+$color-text-primary: #1a1a1a;
+$color-text-secondary: #4a4a4a;
+$color-text-tertiary: #8a8a8a;
+$color-text-placeholder: #bbbbbb;
+$color-text-white: #ffffff;
+
+// 透明度
+$opacity-disabled: 0.3;
+$opacity-hover: 0.7;
+$opacity-pressed: 0.5;
+
+// ========== 玻璃态效果 ==========
+$glass-bg-light: rgba(255, 255, 255, 0.6);
+$glass-bg-medium: rgba(255, 255, 255, 0.7);
+$glass-bg-strong: rgba(255, 255, 255, 0.8);
+$glass-blur: 20px;
+$glass-border: rgba(255, 255, 255, 0.6);
+
+// ========== 阴影 ==========
+$shadow-glass: 0 8rpx 40rpx rgba(0, 0, 0, 0.03);
+$shadow-elevation-1: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+$shadow-elevation-2: 0 16rpx 32rpx rgba(0, 0, 0, 0.06);
+$shadow-elevation-3: 0 24rpx 48rpx rgba(0, 0, 0, 0.08);
+$shadow-float: 0 32rpx 64rpx rgba(0, 0, 0, 0.1);
+
+// ========== 圆角 ==========
+$radius-xs: 8rpx;
+$radius-sm: 12rpx;
+$radius-md: 16rpx;
+$radius-lg: 24rpx;
+$radius-xl: 32rpx;
+$radius-2xl: 48rpx;
+$radius-full: 9999rpx;
+
+// ========== 间距 ==========
+$spacing-xs: 8rpx;
+$spacing-sm: 12rpx;
+$spacing-md: 16rpx;
+$spacing-lg: 24rpx;
+$spacing-xl: 32rpx;
+$spacing-2xl: 48rpx;
+$spacing-3xl: 64rpx;
+
+// 页面边距
+$padding-page: 32rpx;
+$padding-card: 32rpx;
+
+// ========== 字体 ==========
+// 字体大小
+$font-size-xs: 20rpx;      // 10px
+$font-size-sm: 22rpx;      // 11px
+$font-size-base: 24rpx;    // 12px
+$font-size-md: 26rpx;      // 13px
+$font-size-lg: 28rpx;      // 14px
+$font-size-xl: 32rpx;      // 16px
+$font-size-2xl: 36rpx;     // 18px
+$font-size-3xl: 44rpx;     // 22px
+$font-size-4xl: 48rpx;     // 24px
+$font-size-5xl: 60rpx;     // 30px
+$font-size-6xl: 64rpx;     // 32px
+
+// 字体粗细
+$font-weight-light: 300;
+$font-weight-normal: 400;
+$font-weight-medium: 500;
+$font-weight-semibold: 600;
+$font-weight-bold: 700;
+
+// 字体行高
+$line-height-tight: 1.2;
+$line-height-normal: 1.5;
+$line-height-relaxed: 1.8;
+
+// 字体家族
+$font-family-sans: 'Inter', '-apple-system', 'BlinkMacSystemFont', 'Hiragino Sans GB', 'Noto Sans SC', sans-serif;
+$font-family-serif: 'Noto Serif SC', serif;
+$font-family-display: 'Manrope', sans-serif;
+$font-family-mono: 'SF Mono', 'Menlo', 'Monaco', 'Courier New', monospace;
+
+// ========== 过渡动画 ==========
+$transition-fast: 150ms;
+$transition-base: 300ms;
+$transition-slow: 500ms;
+
+// 缓动函数
+$ease-out: cubic-bezier(0.215, 0.61, 0.355, 1);
+$ease-in-out: cubic-bezier(0.645, 0.045, 0.355, 1);
+$ease-bounce: cubic-bezier(0.68, -0.55, 0.265, 1.55);
+
+// ========== Z-index 层级 ==========
+$z-index-base: 1;
+$z-index-dropdown: 10;
+$z-index-sticky: 20;
+$z-index-fixed: 30;
+$z-index-modal-backdrop: 40;
+$z-index-modal: 50;
+$z-index-popover: 60;
+$z-index-tooltip: 70;
+
+// ========== 布局 ==========
+// 屏幕宽度参考（iPhone 14 Pro: 393px）
+$screen-width: 750rpx;
+
+// 组件高度
+$header-height: 88rpx;
+$tab-bar-height: 100rpx;
+$input-height: 80rpx;
+$button-height-md: 88rpx;
+$button-height-lg: 96rpx;
+
+// ========== 渐变 ==========
+$gradient-primary: linear-gradient(135deg, #1a1a1a 0%, #2a2a2a 100%);
+$gradient-secondary: linear-gradient(135deg, #4a4a4a 0%, #6a6a6a 100%);
+$gradient-success: linear-gradient(135deg, #34c759 0%, #30d158 100%);
+$gradient-card: linear-gradient(180deg, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
+$gradient-glass: linear-gradient(180deg, rgba(255, 255, 255, 0.8) 0%, transparent 100%);

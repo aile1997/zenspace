@@ -56,6 +56,12 @@ export function useSeat(options: UseSeatOptions) {
    * @param seatId 座位 ID
    */
   const selectSeat = (seatId: string) => {
+    // 如果点击已选座位，取消选择
+    if (selectedSeatId.value === seatId) {
+      selectedSeatId.value = null;
+      return;
+    }
+
     const seat = seats.value.find((s) => s.id === seatId);
 
     if (!seat) {

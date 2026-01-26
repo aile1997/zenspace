@@ -23,15 +23,18 @@
     "@nestjs/common": "^11.0.1",
     "@nestjs/config": "^4.0.2",
     "@nestjs/core": "^11.0.1",
+    "@nestjs/jwt": "^11.0.2",
     "@nestjs/passport": "^11.0.5",
     "@nestjs/platform-express": "^11.0.1",
     "@nestjs/schedule": "^6.1.0",
     "@nestjs/swagger": "^11.2.5",
+    "@prisma/adapter-pg": "^7.3.0",
     "@prisma/client": "^7.3.0",
     "bcrypt": "^6.0.0",
     "ioredis": "^5.9.2",
     "passport": "^0.7.0",
-    "passport-jwt": "^4.0.1"
+    "passport-jwt": "^4.0.1",
+    "pg": "^8.17.2"
   },
   "devDependencies": {
     "@eslint/eslintrc": "^3.2.0",
@@ -44,6 +47,7 @@
     "@types/jest": "^30.0.0",
     "@types/node": "^22.19.7",
     "@types/passport-jwt": "^4.0.1",
+    "@types/pg": "^8.16.0",
     "@types/supertest": "^6.0.3",
     "@typescript-eslint/eslint-plugin": "^8.53.1",
     "@typescript-eslint/parser": "^8.53.1",
@@ -77,6 +81,13 @@
     "testRegex": ".*\\.spec\\.ts$",
     "transform": {
       "^.+\\.(t|j)s$": "ts-jest"
+    },
+    "moduleNameMapper": {
+      "^@common/(.*)$": "<rootDir>/common/$1",
+      "^@modules/(.*)$": "<rootDir>/modules/$1",
+      "^@prisma/prisma\\.service$": "<rootDir>/prisma/prisma.service",
+      "^@prisma/prisma\\.service\\.spec$": "<rootDir>/prisma/prisma.service.spec",
+      "^@redis/(.*)$": "<rootDir>/redis/$1"
     },
     "collectCoverageFrom": [
       "**/*.(t|j)s"
