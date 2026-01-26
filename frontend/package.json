@@ -5,6 +5,7 @@
   "description": "ZenSpace 移动端全栈前端工作空间",
   "scripts": {
     "dev": "pnpm --filter @zenspace/ui dev",
+    "dev:h5": "pnpm --filter @zenspace/ui dev:h5",
     "build": "pnpm --filter @zenspace/ui build",
     "test": "pnpm --filter @zenspace/core test"
   },

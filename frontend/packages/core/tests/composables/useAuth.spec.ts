@@ -11,9 +11,16 @@
  */
 
 import { describe, it, expect, vi, beforeEach, afterEach } from 'vitest';
+import { createPinia, setActivePinia } from 'pinia';
 import { useAuth } from '@/composables/useAuth';
 import { useUserStore } from '@/stores/user';
+import { getAdapters } from '@/adapters';
 import type { IHttp, IStorage } from '@/adapters';
+
+// Mock adapters
+vi.mock('@/adapters', () => ({
+  getAdapters: vi.fn(),
+}));
 
 // Mock stores
 vi.mock('@/stores/user', () => ({
@@ -26,6 +33,9 @@ describe('useAuth', () => {
   let mockUserStore: any;
 
   beforeEach(() => {
+    // 初始化 Pinia
+    setActivePinia(createPinia());
+
     vi.clearAllMocks();
 
     // 创建 Mock 适配器
@@ -43,14 +53,27 @@ describe('useAuth', () => {
       clear: vi.fn(),
     } as unknown as IStorage;
 
+    // Mock getAdapters
+    vi.mocked(getAdapters).mockReturnValue({ storage: mockStorage });
+
     // Mock userStore
     mockUserStore = {
       user: null,
       token: '',
       isAuthenticated: false,
       isVIP: false,
-      login: vi.fn(),
-      logout: vi.fn(),
+      login: vi.fn().mockImplementation(async (response: any) => {
+        mockUserStore.user = response.user;
+        mockUserStore.token = response.token;
+        await mockStorage.set('user', response.user);
+        await mockStorage.set('token', response.token);
+      }),
+      logout: vi.fn().mockImplementation(async () => {
+        mockUserStore.user = null;
+        mockUserStore.token = '';
+        await mockStorage.remove('user');
+        await mockStorage.remove('token');
+      }),
       restore: vi.fn(),
     };
 
@@ -188,9 +211,11 @@ describe('useAuth', () => {
 
   describe('logout', () => {
     it('应该成功登出并清除用户信息', async () => {
+      vi.mocked(mockHttp.post).mockResolvedValue(undefined);
+
       const { logout } = useAuth({ http: mockHttp, storage: mockStorage });
 
-      logout();
+      await logout();
 
       expect(mockUserStore.logout).toHaveBeenCalled();
       expect(mockStorage.remove).toHaveBeenCalledWith('token');

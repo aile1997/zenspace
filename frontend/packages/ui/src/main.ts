@@ -13,6 +13,12 @@ import { registerAdapters } from '@zenspace/core/adapters';
 import { UniStorage, UniHttp } from './utils/adapters';
 import App from './App.vue';
 
+// 引入 UnoCSS 虚拟样式（编译时生成）
+import 'virtual:uno.css'
+
+// 引入全局样式
+import './styles/index.scss';
+
 export function createApp() {
   const app = createSSRApp(App);
 

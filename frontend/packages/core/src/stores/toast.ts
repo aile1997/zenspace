@@ -70,6 +70,13 @@ export const useToastStore = defineStore('toast', () => {
     showToast(message, 'info');
   };
 
+  /**
+   * 显示警告消息
+   */
+  const showWarning = (message: string) => {
+    showToast(message, 'warning');
+  };
+
   return {
     // 状态
     toast,
@@ -80,5 +87,6 @@ export const useToastStore = defineStore('toast', () => {
     showSuccess,
     showError,
     showInfo,
+    showWarning,
   };
 });

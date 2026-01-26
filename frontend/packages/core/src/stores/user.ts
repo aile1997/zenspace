@@ -5,7 +5,8 @@
  */
 import { defineStore } from 'pinia';
 import { ref, computed } from 'vue';
-import type { User, UserLevel, LoginResponse } from '../types';
+import type { User, LoginResponse } from '../types';
+import { UserLevel } from '../types';
 import { getAdapters } from '../adapters';
 
 export const useUserStore = defineStore('user', () => {

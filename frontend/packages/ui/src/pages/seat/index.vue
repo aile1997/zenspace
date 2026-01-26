@@ -1,72 +1,173 @@
-<!-- 选座页 -->
+<!-- ZenSpace 选座页 -->
 <template>
-  <view class="seat-page">
-    <!-- 头部 -->
-    <view class="header">
-      <view class="header-btn" @tap="goBack">
-        <text>← 返回</text>
+  <view class="flex flex-col h-screen bg-gray-50 relative">
+    <!-- 头部导航 -->
+    <view class="pt-16 pb-6 px-6 bg-white/80 backdrop-blur-xl z-20 flex justify-between items-center shadow-sm border-b border-white/50">
+      <view class="flex items-center gap-1.5 text-secondary pl-2" @tap="goBack">
+        <text class="material-symbols-outlined text-[20px]">arrow_back</text>
+        <text class="text-sm font-medium tracking-wide">区域列表</text>
       </view>
-      <text class="header-title">{{ zoneName }}</text>
-      <view class="header-btn" @tap="openFilter">
-        <text>⚙️</text>
+      <text class="font-serif text-lg font-medium text-primary">{{ zoneName }}</text>
+      <view class="w-10 h-10 flex items-center justify-center rounded-full" @tap="openFilter">
+        <text class="material-symbols-outlined text-[20px]">tune</text>
       </view>
     </view>
 
-    <!-- 座位地图 -->
-    <view class="seat-map-container">
-      <view class="seat-map">
-        <!-- 窗户指示器 -->
-        <view class="window-indicator left"></view>
-        <view class="window-indicator right"></view>
+    <!-- 座位地图容器 -->
+    <view class="flex-1 overflow-auto flex items-center justify-center p-8 relative">
+      <!-- 装饰性地板网格 -->
+      <view class="absolute inset-0 pointer-events-none opacity-40" style="background: radial-gradient(#d1d5db 1px, transparent 1px); background-size: 24px 24px;"></view>
+
+      <view class="relative p-10 bg-white rounded-[60px] shadow-2xl shadow-gray-200/50 border-[6px] border-white ring-1 ring-gray-100" style="min-width: 320px;">
+        <!-- 窗户指示器带反射效果 -->
+        <view class="absolute -left-6 top-16 bottom-16 w-5 bg-sky-50/80 border border-white rounded-l-2xl overflow-hidden backdrop-blur-sm shadow-sm">
+          <view class="absolute top-0 right-0 w-[1px] h-full bg-white/50"></view>
+          <view class="absolute top-[-50%] left-0 w-full h-[200%] bg-gradient-to-b from-transparent via-white/80 to-transparent -rotate-12 opacity-30"></view>
+        </view>
+        <view class="absolute -right-6 top-16 bottom-16 w-5 bg-sky-50/80 border border-white rounded-r-2xl overflow-hidden backdrop-blur-sm shadow-sm">
+          <view class="absolute top-0 left-0 w-[1px] h-full bg-white/50"></view>
+          <view class="absolute top-[-50%] left-0 w-full h-[200%] bg-gradient-to-b from-transparent via-white/80 to-transparent -rotate-12 opacity-30"></view>
+        </view>
 
         <!-- 座位网格 -->
-        <view class="seat-grid">
+        <view class="grid gap-x-5 gap-y-6" style="grid-template-columns: repeat(6, 40px); grid-template-rows: repeat(8, 40px);">
           <view
             v-for="seat in seats"
             :key="seat.id"
-            class="seat-item"
+            class="relative w-10 h-10 flex flex-col items-center justify-end transition-all duration-300"
             :class="{
-              'seat-occupied': seat.status !== 'available',
-              'seat-selected': seat.id === selectedSeatId
+              'cursor-not-allowed opacity-40 grayscale': seat.status !== 'available',
+              'cursor-pointer': seat.status === 'available',
+              'z-10 scale-115': seat.id === selectedSeatId,
+              'z-0 hover:scale-105': seat.status === 'available' && seat.id !== selectedSeatId
             }"
-            :style="getSeatStyle(seat)"
+            :style="{
+              gridColumn: seat.x + 1,
+              gridRow: seat.y + 1
+            }"
             @tap="handleSeatClick(seat)"
           >
-            <text class="seat-label">{{ seat.label }}</text>
+            <!-- 椅背 -->
+            <view
+              class="w-[80%] h-3 rounded-t-lg mb-[1px] shadow-sm border border-b-0 transition-colors duration-300 relative z-0 mx-auto"
+              :class="{
+                'bg-primary border-primary': seat.id === selectedSeatId,
+                'bg-gray-200 border-gray-300': seat.status !== 'available',
+                'bg-white border-gray-300': seat.status === 'available' && seat.id !== selectedSeatId
+              }"
+            ></view>
+
+            <!-- 椅座 -->
+            <view
+              class="w-full h-8 rounded-lg shadow-sm flex items-center justify-center transition-colors duration-300 relative z-10 border"
+              :class="{
+                'bg-primary text-white shadow-xl shadow-primary/30 border-primary translate-y-[-2px]': seat.id === selectedSeatId,
+                'bg-gray-100 text-gray-400 border-gray-200': seat.status !== 'available',
+                'bg-gray-50 text-secondary border-gray-200': seat.status === 'available' && seat.id !== selectedSeatId
+              }"
+            >
+              <text class="text-[10px] font-bold font-mono">{{ seat.label }}</text>
+            </view>
+
+            <!-- 地板阴影 -->
+            <view
+              v-if="seat.id !== selectedSeatId"
+              class="absolute -bottom-2.5 w-6 h-1 bg-black/10 rounded-full blur-[3px] transition-all"
+              :class="{
+                'w-8 blur-[4px] bg-primary/20': seat.status === 'available'
+              }"
+            ></view>
           </view>
         </view>
       </view>
 
-      <!-- 图例 -->
-      <view class="legend">
-        <view class="legend-item">
-          <view class="legend-dot available"></view>
-          <text class="legend-text">空闲</text>
-        </view>
-        <view class="legend-item">
-          <view class="legend-dot occupied"></view>
-          <text class="legend-text">占用</text>
-        </view>
-        <view class="legend-item">
-          <view class="legend-dot selected"></view>
-          <text class="legend-text">已选</text>
+      <!-- 浮动图例 -->
+      <view class="absolute bottom-32 left-0 right-0 flex justify-center z-10 pointer-events-none">
+        <view class="bg-white/80 backdrop-blur-xl px-8 py-3 rounded-full flex gap-8 shadow-2xl shadow-black/5 border border-white ring-1 ring-black/5">
+          <view class="flex items-center gap-2">
+            <view class="w-3 h-3 rounded bg-white border border-gray-300"></view>
+            <text class="text-[10px] text-secondary font-bold tracking-wide">空闲</text>
+          </view>
+          <view class="flex items-center gap-2">
+            <view class="w-3 h-3 rounded bg-gray-200/70 border border-gray-200"></view>
+            <text class="text-[10px] text-gray-400 font-bold tracking-wide">占用</text>
+          </view>
+          <view class="flex items-center gap-2">
+            <view class="w-3 h-3 rounded bg-primary shadow-lg shadow-primary/30"></view>
+            <text class="text-[10px] text-primary font-bold tracking-wide">已选</text>
+          </view>
         </view>
       </view>
     </view>
 
-    <!-- 底部预约栏 -->
-    <view class="bottom-bar">
-      <view class="selected-info">
-        <text class="selected-label">已选座位</text>
-        <text class="selected-seat">{{ selectedSeatLabel || '未选择' }}</text>
+    <!-- 预约确认弹窗 -->
+    <view v-if="showModal && selectedSeat" class="fixed inset-0 z-50 flex items-center justify-center px-8">
+      <!-- 背景遮罩 -->
+      <view
+        class="absolute inset-0 bg-secondary/30 backdrop-blur-md transition-opacity duration-300"
+        @tap="closeModal"
+      ></view>
+
+      <!-- 弹窗内容 -->
+      <view class="relative w-full max-w-[340px] bg-white rounded-[32px] shadow-2xl overflow-hidden">
+        <!-- 顶部渐变 -->
+        <view class="absolute top-0 left-0 w-full h-32 bg-gradient-to-b from-gray-50/80 to-transparent pointer-events-none"></view>
+
+        <view class="relative p-8 flex flex-col items-center">
+          <text class="font-serif text-[22px] font-medium text-primary mb-1 tracking-tight">预约确认</text>
+          <text class="text-[11px] text-gray-400 tracking-widest uppercase mb-8 font-medium">Booking Confirmation</text>
+
+          <view class="w-full flex flex-col gap-6 mb-8">
+            <!-- 座位信息 -->
+            <view class="flex items-center justify-between">
+              <text class="text-[13px] text-gray-400 font-medium tracking-wide">预约座位</text>
+              <view class="flex items-center gap-2">
+                <view class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></view>
+                <text class="font-serif text-[17px] text-primary font-medium tracking-wide">{{ selectedSeatLabel }}</text>
+              </view>
+            </view>
+            <view class="h-px w-full bg-gray-100"></view>
+
+            <!-- 时段信息 -->
+            <view class="flex items-center justify-between">
+              <text class="text-[13px] text-gray-400 font-medium tracking-wide">预约时段</text>
+              <text class="font-sans text-[15px] text-primary font-medium tracking-tight">14:00 - 18:00</text>
+            </view>
+            <view class="h-px w-full bg-gray-100"></view>
+
+            <!-- 支付金额 -->
+            <view class="flex items-center justify-between pt-1">
+              <text class="text-[13px] text-gray-400 font-medium tracking-wide">支付金额</text>
+              <text class="font-serif text-2xl text-primary font-medium">¥50.00</text>
+            </view>
+          </view>
+
+          <view
+            class="w-full bg-[#333333] text-white py-4 rounded-2xl font-medium text-[15px] tracking-widest shadow-lg shadow-gray-200 transition-all active:scale-[0.98] flex items-center justify-center gap-2"
+            @tap="handleConfirmBooking"
+          >
+            <text v-if="bookingState === 'idle'">确认支付</text>
+            <text v-if="bookingState === 'idle'" class="material-symbols-outlined text-[16px] opacity-80">arrow_forward</text>
+            <text v-else class="material-symbols-outlined animate-spin text-[20px]">progress_activity</text>
+          </view>
+
+          <text
+            class="mt-4 text-[13px] text-gray-400 transition-colors tracking-wide font-medium"
+            @tap="closeModal"
+          >
+            取消预约
+          </text>
+        </view>
       </view>
-      <button
-        class="booking-btn"
-        :disabled="!selectedSeatId"
-        @tap="handleBooking"
-      >
-        立即预约
-      </button>
+    </view>
+
+    <!-- 成功状态覆盖层 -->
+    <view v-if="bookingState === 'success'" class="absolute inset-0 z-50 bg-white/95 backdrop-blur-xl flex flex-col items-center justify-center">
+      <view class="w-24 h-24 rounded-full bg-green-500 flex items-center justify-center mb-8 shadow-2xl shadow-green-500/30">
+        <text class="material-symbols-outlined text-white text-[48px]">check</text>
+      </view>
+      <text class="font-serif text-3xl text-primary font-medium mb-3">预约成功</text>
+      <text class="text-secondary text-sm font-light">Prepare for your flow state.</text>
     </view>
   </view>
 </template>
@@ -77,6 +178,7 @@ import { useSeat } from '@zenspace/core/composables';
 import { useToastStore } from '@zenspace/core/stores';
 import { UniHttp } from '../../utils/adapters';
 import type { Seat } from '@zenspace/core/types';
+import { SeatType, SeatStatus } from '@zenspace/core/types';
 
 const props = defineProps<{
   zone?: string;
@@ -88,6 +190,8 @@ const toastStore = useToastStore();
 
 const zoneName = ref('2F 静音研讨区');
 const selectedSeatId = ref<string | null>(null);
+const showModal = ref(false);
+const bookingState = ref<'idle' | 'processing' | 'success'>('idle');
 
 // 生成模拟座位数据
 const generateMockSeats = (): Seat[] => {
@@ -108,8 +212,8 @@ const generateMockSeats = (): Seat[] => {
         id,
         zoneId: 'zone-1',
         label: id,
-        type: isWindow ? 'window' : 'standard',
-        status: isOccupied ? 'occupied' : 'available',
+        type: isWindow ? SeatType.WINDOW : SeatType.STANDARD,
+        status: isOccupied ? SeatStatus.OCCUPIED : SeatStatus.AVAILABLE,
         x,
         y,
       });
@@ -127,12 +231,9 @@ const selectedSeatLabel = computed(() => {
   return seat?.label || '';
 });
 
-const getSeatStyle = (seat: Seat) => {
-  return {
-    gridColumn: seat.x + 1,
-    gridRow: seat.y + 1,
-  };
-};
+const selectedSeat = computed(() => {
+  return seats.value.find(s => s.id === selectedSeatId.value);
+});
 
 const handleSeatClick = (seat: Seat) => {
   if (seat.status !== 'available') {
@@ -140,13 +241,37 @@ const handleSeatClick = (seat: Seat) => {
     return;
   }
 
+  // 如果点击已选座位，取消选择
   if (selectedSeatId.value === seat.id) {
     clearSelection();
     selectedSeatId.value = null;
   } else {
     selectSeat(seat.id);
     selectedSeatId.value = seat.id;
+    // 显示预约确认弹窗
+    showModal.value = true;
   }
+};
+
+const closeModal = () => {
+  showModal.value = false;
+};
+
+const handleConfirmBooking = () => {
+  if (!selectedSeatId.value) return;
+
+  bookingState.value = 'processing';
+
+  // 模拟 API 请求
+  setTimeout(() => {
+    bookingState.value = 'success';
+    toastStore.showSuccess('预约成功，座席已为您保留');
+
+    // 跳转到我的预约页
+    setTimeout(() => {
+      uni.navigateTo({ url: '/pages/my-appointments/index' });
+    }, 2000);
+  }, 1500);
 };
 
 const goBack = () => {
@@ -156,211 +281,138 @@ const goBack = () => {
 const openFilter = () => {
   toastStore.showInfo('筛选功能开发中');
 };
-
-const handleBooking = () => {
-  if (!selectedSeatId.value) return;
-  toastStore.showSuccess('预约成功');
-  setTimeout(() => {
-    uni.navigateTo({ url: '/pages/my-appointments/index' });
-  }, 1500);
-};
 </script>
 
 <style lang="scss" scoped>
-.seat-page {
-  min-height: 100vh;
-  background: #F8F8F8;
-}
-
-.header {
-  padding: 120rpx 32rpx 32rpx;
-  background: white;
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-}
-
-.header-btn {
-  font-size: 28rpx;
-  color: #6B7280;
-  padding: 16rpx;
-}
-
-.header-title {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #1F2937;
-}
-
-.seat-map-container {
-  padding: 48rpx 32rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-}
-
-.seat-map {
-  position: relative;
-  background: white;
-  border-radius: 96rpx;
-  padding: 80rpx;
-  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.1);
-}
-
-.window-indicator {
-  position: absolute;
-  top: 120rpx;
-  bottom: 120rpx;
-  width: 32rpx;
-  background: rgba(186, 230, 253, 0.5);
-  border: 1rpx solid white;
-  border-radius: 16rpx;
-  overflow: hidden;
-}
-
-.window-indicator.left {
-  left: -24rpx;
-  border-radius: 24rpx 0 0 24rpx;
-}
-
-.window-indicator.right {
-  right: -24rpx;
-  border-radius: 0 24rpx 24rpx 0;
-}
-
-.seat-grid {
-  display: grid;
-  grid-template-columns: repeat(6, 88rpx);
-  grid-template-rows: repeat(8, 88rpx);
-  gap: 24rpx 32rpx;
-}
-
-.seat-item {
-  width: 88rpx;
-  height: 88rpx;
-  border-radius: 16rpx;
-  background: white;
-  border: 2rpx solid #E5E7EB;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  transition: all 0.3s ease;
-}
-
-.seat-item.seat-occupied {
-  background: #F3F4F6;
-  border-color: #D1D5DB;
-  opacity: 0.4;
-}
-
-.seat-item.seat-selected {
-  background: #4F46E5;
-  border-color: #4F46E5;
-  transform: scale(1.1);
-  box-shadow: 0 8rpx 24rpx rgba(79, 70, 229, 0.4);
-  z-index: 10;
-}
-
-.seat-label {
+// Material Icons 样式
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
   font-size: 24rpx;
-  font-weight: bold;
-  color: #1F2937;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
 }
 
-.seat-item.seat-selected .seat-label {
-  color: white;
+// 自定义动画
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
 }
 
-.seat-item.seat-occupied .seat-label {
-  color: #9CA3AF;
+.animate-spin {
+  animation: spin 1s linear infinite;
 }
 
-.legend {
-  margin-top: 80rpx;
-  display: flex;
-  gap: 48rpx;
-  background: white;
-  padding: 24rpx 64rpx;
-  border-radius: 96rpx;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+// 颜色变量映射（用于 inline styles 和动态类）
+.bg-secondary\/30 {
+  background-color: rgba(74, 74, 74, 0.3);
 }
 
-.legend-item {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
+.bg-black\/10 {
+  background-color: rgba(0, 0, 0, 0.1);
 }
 
-.legend-dot {
-  width: 24rpx;
-  height: 24rpx;
-  border-radius: 8rpx;
+.bg-primary\/20 {
+  background-color: rgba(26, 26, 26, 0.2);
 }
 
-.legend-dot.available {
-  background: white;
-  border: 2rpx solid #E5E7EB;
+.shadow-primary\/30 {
+  box-shadow: 0 10px 15px -3px rgba(26, 26, 26, 0.3);
 }
 
-.legend-dot.occupied {
-  background: #F3F4F6;
-  border: 2rpx solid #D1D5DB;
+.bg-white\/50 {
+  background-color: rgba(255, 255, 255, 0.5);
 }
 
-.legend-dot.selected {
-  background: #4F46E5;
-  box-shadow: 0 4rpx 12rpx rgba(79, 70, 229, 0.4);
+.bg-white\/80 {
+  background-color: rgba(255, 255, 255, 0.8);
 }
 
-.legend-text {
-  font-size: 24rpx;
-  color: #6B7280;
-  font-weight: bold;
+.bg-white\/95 {
+  background-color: rgba(255, 255, 255, 0.95);
 }
 
-.bottom-bar {
-  position: fixed;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  background: white;
-  padding: 24rpx 32rpx;
-  padding-bottom: calc(24rpx + env(safe-area-inset-bottom));
-  display: flex;
-  align-items: center;
-  gap: 24rpx;
-  box-shadow: 0 -4rpx 16rpx rgba(0, 0, 0, 0.05);
+.bg-sky-50\/80 {
+  background-color: rgba(224, 242, 254, 0.8);
 }
 
-.selected-info {
-  flex: 1;
+.bg-gray-200\/70 {
+  background-color: rgba(229, 231, 235, 0.7);
 }
 
-.selected-label {
-  font-size: 24rpx;
-  color: #9CA3AF;
-  display: block;
-  margin-bottom: 8rpx;
+.bg-gray-50\/80 {
+  background-color: rgba(249, 250, 251, 0.8);
 }
 
-.selected-seat {
-  font-size: 36rpx;
-  font-weight: bold;
-  color: #1F2937;
+.bg-black\/5 {
+  background-color: rgba(0, 0, 0, 0.05);
 }
 
-.booking-btn {
-  padding: 24rpx 64rpx;
-  background: #1F2937;
-  border-radius: 24rpx;
-  font-size: 32rpx;
-  color: white;
-  font-weight: bold;
-  border: none;
+.backdrop-blur-md {
+  backdrop-filter: blur(12px);
 }
 
-.booking-btn[disabled] {
-  background: #E5E7EB;
-  color: #9CA3AF;
+.backdrop-blur-xl {
+  backdrop-filter: blur(24px);
+}
+
+.backdrop-blur-sm {
+  backdrop-filter: blur(4px);
+}
+
+// 响应式调整
+.hover\:scale-105 {
+  &:active {
+    transform: scale(1.05);
+  }
+}
+
+.hover\:scale-115 {
+  &:active {
+    transform: scale(1.15);
+  }
+}
+
+.hover\:text-primary {
+  &:active {
+    color: #1a1a1a;
+  }
+}
+
+.hover\:bg-white {
+  &:active {
+    background-color: white;
+  }
+}
+
+.hover\:w-8 {
+  &:active {
+    width: 32px;
+  }
+}
+
+.hover\:blur-\[4px\] {
+  &:active {
+    filter: blur(4px);
+  }
+}
+
+.hover\:border-primary {
+  &:active {
+    border-color: #1a1a1a;
+  }
+}
+
+.hover\:bg-primary\/20 {
+  &:active {
+    background-color: rgba(26, 26, 26, 0.2);
+  }
 }
 </style>

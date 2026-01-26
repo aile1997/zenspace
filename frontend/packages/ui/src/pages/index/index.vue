@@ -1,105 +1,138 @@
 <!-- ZenSpace 首页 -->
 <template>
-  <view class="home-page">
+  <view class="min-h-screen bg-gray-50 flex flex-col pb-8">
     <!-- 头部区域 -->
-    <view class="header">
-      <view class="header-content">
-        <view class="location-section">
-          <text class="brand-tag">ZenSpace</text>
-          <view class="location-info">
-            <text class="location-name">丸の内</text>
-            <text class="location-sub">中央馆</text>
-          </view>
-          <text class="expand-icon">▼</text>
+    <view class="pt-16 pb-8 px-8 flex justify-between items-end">
+      <view class="flex flex-col gap-2">
+        <text class="text-[10px] font-bold tracking-[0.3em] text-accent uppercase pl-0.5">ZenSpace</text>
+        <view class="relative group cursor-pointer flex items-center gap-2" @tap="handleLocationChange">
+          <text class="font-serif text-[32px] font-light text-primary tracking-tight leading-tight">
+            丸の内
+            <text class="text-2xl opacity-60">中央馆</text>
+          </text>
+          <text class="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors text-[24px] self-start mt-2">
+            expand_more
+          </text>
         </view>
-        <view class="notification-btn" @tap="goToNotifications">
-          <text class="icon">🔔</text>
-          <view class="notification-dot"></view>
-        </view>
+      </view>
+      <view
+        @tap="goToNotifications"
+        class="relative w-12 h-12 rounded-full border border-white bg-white/40 backdrop-blur-xl shadow-sm flex items-center justify-center hover:bg-white hover:shadow-md hover:scale-105 transition-all duration-300 active:scale-95"
+      >
+        <text class="material-symbols-outlined text-primary text-[22px]">notifications</text>
+        <view class="absolute top-3.5 right-3.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></view>
       </view>
     </view>
 
-    <!-- 实时拥挤度 -->
-    <view class="stats-section">
-      <view class="section-header">
-        <text class="section-tag">实时拥挤度</text>
-        <view class="live-badge">
-          <view class="live-dot"></view>
-          <text class="live-text">Live</text>
+    <!-- 实时流量统计 -->
+    <view class="px-6 flex flex-col gap-10 animate-fade-in">
+      <!-- Section Header -->
+      <view class="flex items-center justify-between px-2">
+        <text class="text-[10px] font-bold text-accent tracking-[0.2em] uppercase">Real-time Traffic</text>
+        <view class="flex items-center gap-2">
+          <view
+            @tap="goToMap"
+            class="px-2 py-1 rounded-full bg-white/80 border border-gray-100 shadow-sm backdrop-blur flex items-center gap-1 cursor-pointer hover:bg-white transition-colors"
+          >
+            <text class="material-symbols-outlined text-primary text-[14px]">map</text>
+            <text class="text-[9px] text-primary font-medium tracking-wider uppercase">Heatmap</text>
+          </view>
+          <view class="flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 border border-gray-100 shadow-sm backdrop-blur">
+            <view class="relative flex h-2 w-2">
+              <view class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></view>
+              <view class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></view>
+            </view>
+            <text class="text-[9px] text-primary font-bold tracking-wider uppercase">Live</text>
+          </view>
         </view>
       </view>
 
-      <view class="stats-card">
+      <!-- Stats Card -->
+      <view class="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 flex flex-col gap-8 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-white">
         <!-- 1F 综合阅览区 -->
-        <view class="stat-item" @tap="handleZoneClick('1f')">
-          <view class="stat-header">
-            <text class="stat-label">1F 综合阅览区</text>
-            <text class="stat-value">82<span class="stat-percent">%</span></text>
+        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('1f')">
+          <view class="flex justify-between items-end">
+            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">1F 综合阅览区</text>
+            <text class="font-display text-xl text-primary font-bold leading-none">82<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
-          <view class="stat-bar">
-            <view class="stat-bar-fill stat-busy" style="width: 82%"></view>
+          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
+            <view class="h-full bg-gradient-to-r from-gray-600 via-gray-800 to-black w-[82%] rounded-full shadow-sm transition-all duration-1000 group-hover:w-[85%]"></view>
           </view>
         </view>
 
         <!-- 2F 静音研讨室 -->
-        <view class="stat-item" @tap="handleZoneClick('2f')">
-          <view class="stat-header">
-            <text class="stat-label">2F 静音研讨室</text>
-            <text class="stat-value">45<span class="stat-percent">%</span></text>
+        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('2f')">
+          <view class="flex justify-between items-end">
+            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">2F 静音研讨室</text>
+            <text class="font-display text-xl text-primary font-bold leading-none">45<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
-          <view class="stat-bar">
-            <view class="stat-bar-fill stat-moderate" style="width: 45%"></view>
+          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
+            <view class="h-full bg-gradient-to-r from-gray-300 to-gray-500 w-[45%] rounded-full transition-all duration-1000 group-hover:w-[48%]"></view>
           </view>
         </view>
 
         <!-- 3F 开放协作台 -->
-        <view class="stat-item" @tap="handleZoneClick('3f')">
-          <view class="stat-header">
-            <text class="stat-label">3F 开放协作台</text>
-            <text class="stat-value">12<span class="stat-percent">%</span></text>
+        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('3f')">
+          <view class="flex justify-between items-end">
+            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">3F 开放协作台</text>
+            <text class="font-display text-xl text-primary font-bold leading-none">12<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
-          <view class="stat-bar">
-            <view class="stat-bar-fill stat-empty" style="width: 12%"></view>
+          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
+            <view class="h-full bg-gradient-to-r from-gray-200 to-gray-300 w-[12%] rounded-full transition-all duration-1000 group-hover:w-[15%]"></view>
           </view>
         </view>
       </view>
     </view>
 
     <!-- 功能卡片 -->
-    <view class="features-section">
+    <view class="grid grid-cols-2 gap-5 px-6">
       <!-- 智能选座 -->
-      <view class="feature-card" @tap="goToBooking">
-        <view class="feature-image">
+      <view
+        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        @tap="goToBooking"
+      >
+        <view class="relative w-full aspect-[4/5] overflow-hidden">
           <image
-            src="https://images.unsplash.com/photo-1507537297725-24a1c434c67b?w=800"
+            src="https://images.unsplash.com/photo-1507537297725-24a1c434c67b?q=80&w=800&auto=format&fit=crop"
             mode="aspectFill"
-            class="feature-img"
+            class="w-full h-full object-cover high-key-img transition-transform duration-1000 group-hover:scale-110"
           />
-          <view class="feature-overlay"></view>
+          <view class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></view>
         </view>
-        <view class="feature-content">
-          <view class="feature-icon">💺</view>
-          <text class="feature-title">智能\n选座</text>
-          <view class="feature-divider"></view>
-          <text class="feature-subtitle">Smart Booking</text>
+        <view class="absolute bottom-0 left-0 w-full p-6 flex flex-col items-start">
+          <view class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 border border-white/20 shadow-lg">
+            <text class="material-symbols-outlined text-white text-[20px]">event_seat</text>
+          </view>
+          <text class="font-serif text-2xl font-light text-white tracking-wide leading-tight">智能
+            <text>选座</text>
+          </text>
+          <view class="h-[1px] w-8 bg-white/40 mt-4 mb-2"></view>
+          <text class="text-[9px] text-white/60 font-medium tracking-widest uppercase">Smart Booking</text>
         </view>
       </view>
 
       <!-- 积分商城 -->
-      <view class="feature-card" @tap="goToRewards">
-        <view class="feature-image">
+      <view
+        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        @tap="goToRewards"
+      >
+        <view class="relative w-full aspect-[4/5] overflow-hidden">
           <image
-            src="https://images.unsplash.com/photo-1616031036329-373b53c65c2b?w=800"
+            src="https://images.unsplash.com/photo-1616031036329-373b53c65c2b?q=80&w=800&auto=format&fit=crop"
             mode="aspectFill"
-            class="feature-img"
+            class="w-full h-full object-cover high-key-img transition-transform duration-1000 group-hover:scale-110"
           />
-          <view class="feature-overlay"></view>
+          <view class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></view>
         </view>
-        <view class="feature-content">
-          <view class="feature-icon">🛍️</view>
-          <text class="feature-title">积分\n商城</text>
-          <view class="feature-divider"></view>
-          <text class="feature-subtitle">Rewards Club</text>
+        <view class="absolute bottom-0 left-0 w-full p-6 flex flex-col items-start">
+          <view class="w-10 h-10 rounded-2xl bg-white/10 backdrop-blur-md flex items-center justify-center mb-4 border border-white/20 shadow-lg">
+            <text class="material-symbols-outlined text-white text-[20px]">local_mall</text>
+          </view>
+          <text class="font-serif text-2xl font-light text-white tracking-wide leading-tight">积分
+            <text>商城</text>
+          </text>
+          <view class="h-[1px] w-8 bg-white/40 mt-4 mb-2"></view>
+          <text class="text-[9px] text-white/60 font-medium tracking-widest uppercase">Rewards Club</text>
         </view>
       </view>
     </view>
@@ -117,12 +150,25 @@ onMounted(async () => {
   await userStore.restore();
 });
 
+// 切换位置
+const handleLocationChange = () => {
+  uni.showToast({
+    title: '位置选择功能开发中',
+    icon: 'none'
+  });
+};
+
 // 跳转到通知页
 const goToNotifications = () => {
   uni.navigateTo({ url: '/pages/notifications/index' });
 };
 
-// 跳转到预约页
+// 跳转到空间热力图
+const goToMap = () => {
+  uni.navigateTo({ url: '/pages/map/index' });
+};
+
+// 跳转到选座页
 const goToBooking = () => {
   uni.navigateTo({ url: '/pages/seat/index' });
 };
@@ -139,316 +185,48 @@ const handleZoneClick = (zoneId: string) => {
 </script>
 
 <style lang="scss" scoped>
-.home-page {
-  min-height: 100vh;
-  background: #F8F8F8;
-  padding-bottom: 120rpx;
-}
-
-/* 头部 */
-.header {
-  padding: 120rpx 32rpx 32rpx;
-  background: white;
-}
-
-.header-content {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-}
-
-.location-section {
-  display: flex;
-  align-items: center;
-  gap: 16rpx;
-}
-
-.brand-tag {
-  font-size: 20rpx;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  color: #14B8A6;
-  text-transform: uppercase;
-}
-
-.location-info {
-  display: flex;
-  flex-direction: column;
-}
-
-.location-name {
-  font-size: 56rpx;
-  font-weight: 300;
-  color: #1F2937;
-  line-height: 1.2;
-}
-
-.location-sub {
-  font-size: 40rpx;
-  opacity: 0.6;
-  color: #1F2937;
-}
-
-.expand-icon {
+// Material Icons 样式
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
   font-size: 24rpx;
-  color: #9CA3AF;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
 }
 
-.notification-btn {
-  position: relative;
-  width: 80rpx;
-  height: 80rpx;
-  border-radius: 50%;
-  border: 1rpx solid white;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(40rpx);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.05);
+// 高调图片滤镜
+.high-key-img {
+  filter: contrast(0.95) brightness(1.05) saturate(0.9);
 }
 
-.notification-btn .icon {
-  font-size: 40rpx;
-}
-
-.notification-dot {
-  position: absolute;
-  top: 24rpx;
-  right: 24rpx;
-  width: 12rpx;
-  height: 12rpx;
-  border-radius: 50%;
-  background: #EF4444;
-  border: 4rpx solid white;
-}
-
-/* 实时拥挤度 */
-.stats-section {
-  padding: 32rpx;
-}
-
-.section-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 32rpx;
-  padding: 0 8rpx;
-}
-
-.section-tag {
-  font-size: 20rpx;
-  font-weight: bold;
-  letter-spacing: 0.1em;
-  color: #14B8A6;
-  text-transform: uppercase;
-}
-
-.live-badge {
-  display: flex;
-  align-items: center;
-  gap: 8rpx;
-  padding: 8rpx 16rpx;
-  border-radius: 100rpx;
-  background: rgba(255, 255, 255, 0.8);
-  border: 1rpx solid #F3F4F6;
-  box-shadow: 0 2rpx 8rpx rgba(0, 0, 0, 0.05);
-}
-
-.live-dot {
-  position: relative;
-  width: 12rpx;
-  height: 12rpx;
-  border-radius: 50%;
-  background: #22C55E;
-}
-
-.live-dot::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  border-radius: 50%;
-  background: #22C55E;
-  animation: live-ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
-}
-
-@keyframes live-ping {
+// 动画关键帧（UniApp 兼容）
+@keyframes ping {
   75%, 100% {
     transform: scale(2);
     opacity: 0;
   }
 }
 
-.live-text {
-  font-size: 18rpx;
-  font-weight: bold;
-  letter-spacing: 0.05em;
-  color: #1F2937;
-  text-transform: uppercase;
+.animate-ping {
+  animation: ping 1.5s cubic-bezier(0, 0, 0.2, 1) infinite;
 }
 
-.stats-card {
-  background: rgba(255, 255, 255, 0.6);
-  backdrop-filter: blur(40rpx);
-  border-radius: 48rpx;
-  padding: 48rpx;
-  box-shadow: 0 16rpx 64rpx rgba(0, 0, 0, 0.03);
-  border: 1rpx solid white;
+.animate-fade-in {
+  animation: fadeIn 0.5s ease-out forwards;
 }
 
-.stat-item {
-  margin-bottom: 48rpx;
-}
-
-.stat-item:last-child {
-  margin-bottom: 0;
-}
-
-.stat-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: flex-end;
-  margin-bottom: 16rpx;
-}
-
-.stat-label {
-  font-size: 24rpx;
-  color: #6B7280;
-  font-weight: 500;
-  letter-spacing: 0.05em;
-}
-
-.stat-value {
-  font-size: 36rpx;
-  color: #1F2937;
-  font-weight: bold;
-}
-
-.stat-percent {
-  font-size: 20rpx;
-  color: #9CA3AF;
-  font-weight: normal;
-  margin-left: 4rpx;
-}
-
-.stat-bar {
-  height: 16rpx;
-  background: #F3F4F6;
-  border-radius: 100rpx;
-  overflow: hidden;
-  padding: 2rpx;
-}
-
-.stat-bar-fill {
-  height: 100%;
-  border-radius: 100rpx;
-  transition: width 1s ease;
-}
-
-.stat-busy {
-  background: linear-gradient(to right, #4B5563, #1F2937, black);
-}
-
-.stat-moderate {
-  background: linear-gradient(to right, #9CA3AF, #6B7280);
-}
-
-.stat-empty {
-  background: linear-gradient(to right, #D1D5DB, #E5E7EB);
-}
-
-/* 功能卡片 */
-.features-section {
-  display: grid;
-  grid-template-columns: repeat(2, 1fr);
-  gap: 32rpx;
-  padding: 0 32rpx;
-}
-
-.feature-card {
-  position: relative;
-  border-radius: 48rpx;
-  overflow: hidden;
-  background: white;
-  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.08);
-  transition: all 0.5s ease;
-}
-
-.feature-card:active {
-  transform: translateY(-8rpx);
-  box-shadow: 0 24rpx 48rpx rgba(0, 0, 0, 0.12);
-}
-
-.feature-image {
-  position: relative;
-  width: 100%;
-  aspect-ratio: 4/5;
-}
-
-.feature-img {
-  width: 100%;
-  height: 100%;
-  transition: transform 1s ease;
-}
-
-.feature-card:active .feature-img {
-  transform: scale(1.1);
-}
-
-.feature-overlay {
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(to top, rgba(0, 0, 0, 0.8) 0%, rgba(0, 0, 0, 0.2) 50%, transparent 100%);
-  opacity: 0.9;
-}
-
-.feature-content {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  right: 0;
-  padding: 40rpx;
-  display: flex;
-  flex-direction: column;
-  align-items: flex-start;
-}
-
-.feature-icon {
-  width: 72rpx;
-  height: 72rpx;
-  border-radius: 24rpx;
-  background: rgba(255, 255, 255, 0.1);
-  backdrop-filter: blur(40rpx);
-  border: 1rpx solid rgba(255, 255, 255, 0.2);
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  font-size: 36rpx;
-  margin-bottom: 24rpx;
-  box-shadow: 0 8rpx 32rpx rgba(0, 0, 0, 0.2);
-}
-
-.feature-title {
-  font-size: 44rpx;
-  font-weight: 300;
-  color: white;
-  letter-spacing: 0.05em;
-  line-height: 1.2;
-  white-space: pre-line;
-}
-
-.feature-divider {
-  width: 56rpx;
-  height: 2rpx;
-  background: rgba(255, 255, 255, 0.4);
-  margin: 24rpx 0 16rpx;
-}
-
-.feature-subtitle {
-  font-size: 18rpx;
-  color: rgba(255, 255, 255, 0.6);
-  font-weight: 500;
-  letter-spacing: 0.1em;
-  text-transform: uppercase;
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
 }
 </style>
