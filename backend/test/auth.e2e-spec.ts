@@ -344,9 +344,7 @@ describe('Auth API (e2e)', () => {
      * 测试用例 4.2: 未认证用户登出返回 401
      */
     it('应该拒绝未认证用户的登出请求', async () => {
-      await request(app.getHttpServer())
-        .post('/api/auth/logout')
-        .expect(401);
+      await request(app.getHttpServer()).post('/api/auth/logout').expect(401);
     });
   });
 
@@ -385,9 +383,7 @@ describe('Auth API (e2e)', () => {
      * 测试用例 5.2: 未认证用户返回 401
      */
     it('应该拒绝未认证用户的请求', async () => {
-      await request(app.getHttpServer())
-        .get('/api/auth/profile')
-        .expect(401);
+      await request(app.getHttpServer()).get('/api/auth/profile').expect(401);
     });
   });
 

@@ -38,8 +38,8 @@
             class="bg-transparent border-none outline-none text-sm w-full placeholder-gray-400 text-primary"
           />
           <button
-            class="text-[10px] font-medium text-primary whitespace-nowrap px-2 py-1 rounded bg-gray-200"
-            @tap="sendCode"
+            class="text-[10px] font-medium text-primary whitespace-nowrap px-2 py-1 rounded bg-gray-200 cursor-pointer"
+            @click="sendCode"
           >
             {{ countdown > 0 ? `${countdown}s` : 'Get Code' }}
           </button>
@@ -50,9 +50,9 @@
     <!-- Action Area -->
     <view class="p-8 pb-12 relative z-10 animate-fade-in" style="animation-delay: 0.4s">
       <view
-        class="w-full bg-primary text-white h-14 rounded-2xl font-medium tracking-wide shadow-xl shadow-black/10 flex items-center justify-center gap-2"
+        class="w-full bg-primary text-white h-14 rounded-2xl font-medium tracking-wide shadow-xl shadow-black/10 flex items-center justify-center gap-2 cursor-pointer"
         :class="{ 'opacity-70': isLoading }"
-        @tap="handleLogin"
+        @click="handleLogin"
       >
         <text v-if="!isLoading">Enter Space</text>
         <text v-if="!isLoading" class="material-symbols-outlined text-[18px]">arrow_forward</text>
@@ -108,38 +108,39 @@ const sendCode = async () => {
       }
     }, 1000);
   } catch (error) {
-    toastStore.showError('发送失败');
+    const message = error instanceof Error ? error.message : '发送失败';
+    toastStore.showError(message);
   }
 };
 
 // 处理登录
 const handleLogin = async () => {
+  console.log('[Login] handleLogin 被调用', { phone: phone.value, code: code.value });
+
   if (!phone.value || !code.value) {
     toastStore.showError('请填写完整信息');
     return;
   }
 
   isLoading.value = true;
+  console.log('[Login] 开始登录请求...');
 
   try {
-    // 模拟 API 调用
-    await new Promise(resolve => setTimeout(resolve, 1500));
-
-    // 更新用户状态
-    userStore.setUser({
-      id: 'user-1',
+    // 调用登录 API
+    const response = await smsLogin({
       phone: phone.value,
-      nickname: '用户',
-      avatar: 'person',
-      level: 'NORMAL',
-      points: 100,
-      isAuthenticated: true
+      code: code.value
     });
 
     toastStore.showSuccess('登录成功');
-    uni.switchTab({ url: '/pages/index/index' });
+
+    // 延迟跳转，让用户看到成功提示
+    setTimeout(() => {
+      uni.reLaunch({ url: '/pages/index/index' });
+    }, 500);
   } catch (error) {
-    toastStore.showError('登录失败');
+    const message = error instanceof Error ? error.message : '登录失败';
+    toastStore.showError(message);
   } finally {
     isLoading.value = false;
   }
@@ -174,5 +175,9 @@ const handleLogin = async () => {
 
 .animate-fade-in {
   animation: fadeIn 0.5s ease-out forwards;
+}
+
+.cursor-pointer {
+  cursor: pointer;
 }
 </style>

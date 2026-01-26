@@ -86,9 +86,9 @@ describe('JwtStrategy', () => {
     it('应该在数据库异常时抛出错误', async () => {
       const payload = { sub: 'user-123', phone: '13800138000' };
 
-      mockPrismaService.user.findUnique = jest.fn().mockRejectedValue(
-        new Error('Database connection failed'),
-      );
+      mockPrismaService.user.findUnique = jest
+        .fn()
+        .mockRejectedValue(new Error('Database connection failed'));
 
       await expect(strategy.validate(payload)).rejects.toThrow(
         'Database connection failed',

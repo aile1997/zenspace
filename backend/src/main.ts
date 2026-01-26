@@ -4,8 +4,8 @@ import { AppModule } from './app.module';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // 配置全局路由前缀
-  app.setGlobalPrefix('api');
+  // 配置全局路由前缀（包含版本号）
+  app.setGlobalPrefix('api/v1');
 
   // 配置 CORS，允许前端跨域访问
   app.enableCors({
@@ -16,7 +16,7 @@ async function bootstrap() {
   await app.listen(process.env.PORT ?? 3000);
 
   console.log(
-    `🚀 应用运行在: http://localhost:${process.env.PORT ?? 3000}/api`,
+    `🚀 应用运行在: http://localhost:${process.env.PORT ?? 3000}/api/v1`,
   );
 }
 

@@ -1,84 +1,102 @@
 <!-- ZenSpace 预约页 - 日期和区域选择 -->
 <template>
-  <view class="flex flex-col h-full bg-[#f8f9fa] min-h-screen">
+  <view class="booking-page">
     <!-- 头部 -->
-    <view class="pt-16 pb-8 px-8 bg-white/80 backdrop-blur-xl sticky top-0 z-20 border-b border-black/5">
-      <view class="flex items-center justify-between mb-8">
-        <view class="flex flex-col gap-2">
-          <text class="font-serif text-3xl text-primary font-light tracking-tight">预约座位</text>
-          <text class="text-[10px] text-secondary tracking-[0.2em] uppercase font-bold">Select Date & Zone</text>
+    <view class="booking-header">
+      <view class="header-content">
+        <view class="header-text">
+          <text class="header-title">预约座位</text>
+          <text class="header-subtitle">Select Date & Zone</text>
         </view>
-        <view class="w-10 h-10 rounded-full bg-white border border-gray-100 shadow-sm flex items-center justify-center" @tap="goBack">
-          <text class="material-symbols-outlined text-gray-500 text-[20px]">close</text>
+        <view class="close-btn" @tap="goBack">
+          <text class="material-symbols-outlined">close</text>
         </view>
       </view>
 
       <!-- 日期选择器 -->
-      <view class="flex justify-between items-center gap-3 overflow-x-auto hide-scrollbar pb-2">
+      <view class="date-selector">
         <view
           v-for="(date, index) in dates"
           :key="index"
-          class="flex flex-col items-center justify-center min-w-[56px] h-[76px] rounded-[22px] transition-all duration-300"
-          :class="{
-            'bg-primary text-white shadow-[0_8px_20px_rgba(26,26,26,0.25)] translate-y-[-2px]': selectedDate === index,
-            'bg-white text-secondary hover:bg-gray-50 shadow-[0_2px_8px_rgba(0,0,0,0.04)] border border-transparent': selectedDate !== index
-          }"
+          class="date-item"
+          :class="{ 'date-item-active': selectedDate === index }"
           @tap="selectDate(index)"
         >
-          <text class="text-[10px] font-medium tracking-wide mb-1 uppercase" :class="selectedDate === index ? 'opacity-80' : 'opacity-40'">{{ date.week }}</text>
-          <text class="text-2xl font-display font-bold" :class="selectedDate === index ? 'text-white' : 'text-primary'">{{ date.day }}</text>
+          <text class="date-week" :class="selectedDate === index ? 'text-white opacity-80' : 'text-secondary opacity-40'">
+            {{ date.week }}
+          </text>
+          <text class="date-day" :class="selectedDate === index ? 'text-white' : 'text-primary'">
+            {{ date.day }}
+          </text>
         </view>
       </view>
     </view>
 
-    <!-- 区域列表 -->
-    <view class="p-6 flex flex-col gap-8 pb-32 overflow-y-auto">
+    <!-- 骨架屏加载状态 -->
+    <view v-if="loading" class="zones-skeleton">
+      <view v-for="i in 3" :key="i" class="skeleton-card">
+        <view class="skeleton-image shimmer"></view>
+        <view class="skeleton-content">
+          <view class="skeleton-title shimmer"></view>
+          <view class="skeleton-tags">
+            <view class="skeleton-tag shimmer"></view>
+            <view class="skeleton-tag shimmer"></view>
+          </view>
+          <view class="skeleton-footer">
+            <view class="skeleton-text shimmer"></view>
+            <view class="skeleton-bar shimmer"></view>
+          </view>
+        </view>
+      </view>
+    </view>
+
+    <!-- 区域列表（真实数据） -->
+    <view v-else class="zones-list">
       <view
-        v-for="zone in zones"
+        v-for="(zone, index) in zones"
         :key="zone.id"
-        class="group relative bg-white rounded-[32px] overflow-hidden shadow-[0_2px_12px_rgba(0,0,0,0.03)]"
+        class="zone-card"
+        :style="{ animationDelay: `${index * 100}ms` }"
         @tap="goToSeatSelection(zone.id)"
       >
         <!-- 状态标签 -->
-        <view class="absolute top-5 right-5 z-10 bg-white/80 backdrop-blur-md px-3 py-1.5 rounded-full text-[10px] font-bold text-primary shadow-lg ring-1 ring-white/50 flex items-center gap-1.5">
-          <view class="w-1.5 h-1.5 rounded-full" :class="getOccupancyColor(zone.occupancy)"></view>
-          <text>{{ zone.floor }}</text>
+        <view class="zone-status">
+          <view class="status-dot" :class="getStatusDotClass(zone.status)"></view>
+          <text>{{ zone.floor }}F</text>
         </view>
 
         <!-- 区域图片 -->
-        <view class="h-44 w-full overflow-hidden relative">
+        <view class="zone-image">
           <image
-            :src="zone.image"
+            :src="zone.imageUrl || getDefaultImage(zone.floor)"
             mode="aspectFill"
-            class="w-full h-full transition-transform duration-1000 high-key-img"
+            class="zone-img"
           />
-          <view class="absolute inset-0 bg-gradient-to-t from-white via-white/10 to-transparent"></view>
+          <view class="zone-image-overlay"></view>
         </view>
 
         <!-- 区域信息 -->
-        <view class="px-8 pb-8 pt-0 flex justify-between items-end relative -mt-4">
-          <view class="flex flex-col gap-3">
-            <text class="font-serif text-2xl font-medium text-primary bg-white/50 backdrop-blur-sm rounded-lg px-2 -ml-2">{{ zone.name }}</text>
-            <view class="flex gap-2">
-              <text
-                v-for="tag in zone.tags"
-                :key="tag"
-                class="text-[10px] text-secondary/70 bg-gray-50 border border-gray-100 px-2.5 py-1.5 rounded-lg tracking-wide font-medium"
-              >
-                {{ tag }}
+        <view class="zone-info">
+          <view class="zone-left">
+            <text class="zone-name">{{ zone.name }}</text>
+            <view class="zone-tags">
+              <text v-for="feature in zone.features.slice(0, 2)" :key="feature" class="zone-tag">
+                {{ feature }}
               </text>
             </view>
           </view>
 
-          <view class="flex flex-col items-end gap-2">
-            <text class="text-[9px] text-secondary font-bold uppercase tracking-widest">
-              Available <text class="font-display font-bold text-xl text-primary ml-1">{{ zone.available }}</text>
-            </text>
-            <view class="w-24 h-2 bg-gray-100 rounded-full overflow-hidden p-[2px]">
+          <view class="zone-right">
+            <view class="zone-availability">
+              <text class="avail-label">剩余</text>
+              <text class="avail-count">{{ zone.availableSeats }}</text>
+              <text class="avail-unit">座位</text>
+            </view>
+            <view class="zone-meter">
               <view
-                class="h-full rounded-full transition-all duration-1000 ease-out"
-                :class="zone.occupancy > 80 ? 'bg-primary' : 'bg-primary/60'"
-                :style="{ width: zone.occupancy + '%' }"
+                class="zone-meter-fill"
+                :class="getMeterClass(zone.status)"
+                :style="{ width: zone.occupancyRate + '%' }"
               ></view>
             </view>
           </view>
@@ -89,7 +107,17 @@
 </template>
 
 <script setup lang="ts">
-import { ref, computed } from 'vue';
+import { ref, computed, onMounted } from 'vue';
+import { useZoneStore } from '@zenspace/core/stores';
+import { useToastStore } from '@zenspace/core/stores';
+import { UniHttp } from '../../utils/adapters';
+
+const http = new UniHttp('http://localhost:3000/api/v1');
+const zoneStore = useZoneStore();
+const toastStore = useToastStore();
+
+const selectedDate = ref(0);
+const loading = ref(true);
 
 // 生成未来 7 天的日期
 const generateDates = () => {
@@ -106,53 +134,64 @@ const generateDates = () => {
   return dates;
 };
 
-const selectedDate = ref<number>(0);
 const dates = generateDates();
 
-// 区域数据
-const zones = [
-  {
-    id: 'z1',
-    name: '静音研讨区',
-    floor: '2F',
-    occupancy: 45,
-    capacity: 40,
-    available: 22,
-    tags: ['绝对安静', '独立电源'],
-    image: 'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800'
-  },
-  {
-    id: 'z2',
-    name: '综合阅览区',
-    floor: '1F',
-    occupancy: 82,
-    capacity: 120,
-    available: 21,
-    tags: ['自然光', '开放式'],
-    image: 'https://images.unsplash.com/photo-1524813686514-a57563d77965?auto=format&fit=crop&q=80&w=800'
-  },
-  {
-    id: 'z3',
-    name: '协作办公台',
-    floor: '3F',
-    occupancy: 12,
-    capacity: 30,
-    available: 26,
-    tags: ['可交谈', '白板'],
-    image: 'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800'
+// 获取区域列表（computed）
+const zones = computed(() => zoneStore.zones);
+
+onMounted(async () => {
+  try {
+    loading.value = true;
+    await zoneStore.fetchZones(http);
+  } catch (err) {
+    toastStore.showError('加载失败，请重试');
+  } finally {
+    // 延迟隐藏加载，让动画更流畅
+    setTimeout(() => {
+      loading.value = false;
+    }, 300);
   }
-];
+});
 
 // 选择日期
 const selectDate = (index: number) => {
   selectedDate.value = index;
 };
 
-// 获取占用率颜色
-const getOccupancyColor = (occupancy: number) => {
-  if (occupancy > 80) return 'bg-red-500 animate-pulse';
-  if (occupancy > 50) return 'bg-yellow-500 animate-pulse';
-  return 'bg-green-500 animate-pulse';
+// 获取状态点样式
+const getStatusDotClass = (status: string) => {
+  switch (status) {
+    case 'busy':
+      return 'status-dot-busy';
+    case 'moderate':
+      return 'status-dot-moderate';
+    case 'available':
+    default:
+      return 'status-dot-available';
+  }
+};
+
+// 获取进度条样式
+const getMeterClass = (status: string) => {
+  switch (status) {
+    case 'busy':
+      return 'meter-busy';
+    case 'moderate':
+      return 'meter-moderate';
+    case 'available':
+    default:
+      return 'meter-available';
+  }
+};
+
+// 获取默认图片
+const getDefaultImage = (floor: number) => {
+  const images = [
+    'https://images.unsplash.com/photo-1524813686514-a57563d77965?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1497366216548-37526070297c?auto=format&fit=crop&q=80&w=800',
+    'https://images.unsplash.com/photo-1556761175-5973dc0f32e7?auto=format&fit=crop&q=80&w=800'
+  ];
+  return images[floor - 1] || images[0];
 };
 
 // 跳转到选座页
@@ -167,32 +206,396 @@ const goBack = () => {
 </script>
 
 <style lang="scss" scoped>
-// Material Icons 样式
-.material-symbols-outlined {
-  font-family: 'Material Symbols Outlined';
-  font-weight: normal;
-  font-style: normal;
-  font-size: 24rpx;
-  line-height: 1;
-  letter-spacing: normal;
-  text-transform: none;
-  display: inline-block;
-  white-space: nowrap;
-  word-wrap: normal;
-  direction: ltr;
+.booking-page {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+  background: #f8f9fa;
+}
+
+// 头部
+.booking-header {
+  padding: 128rpx 64rpx 64rpx;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24rpx);
+  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  position: sticky;
+  top: 0;
+  z-index: 20;
+}
+
+.header-content {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: 64rpx;
+}
+
+.header-text {
+  display: flex;
+  flex-direction: column;
+  gap: 16rpx;
+}
+
+.header-title {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 48rpx;
+  font-weight: 300;
+  color: #1a1a1a;
+  letter-spacing: -0.02em;
+}
+
+.header-subtitle {
+  font-size: 20rpx;
+  color: #8e8e93;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+  font-weight: 700;
+}
+
+.close-btn {
+  width: 80rpx;
+  height: 80rpx;
+  border-radius: 50%;
+  background: white;
+  border: 2rpx solid #f3f4f6;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+// 日期选择器
+.date-selector {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 24rpx;
+}
+
+.date-item {
+  min-width: 112rpx;
+  height: 152rpx;
+  border-radius: 44rpx;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 8rpx;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+  background: white;
+  color: #8e8e93;
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
+  border: 2rpx solid transparent;
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+.date-item-active {
+  background: #1a1a1a;
+  color: white;
+  box-shadow: 0 16rpx 40rpx rgba(26, 26, 26, 0.25);
+  transform: translateY(-8rpx);
+}
+
+.date-week {
+  font-size: 20rpx;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  margin-bottom: 4rpx;
+}
+
+.date-day {
+  font-size: 48rpx;
+  font-weight: 700;
+}
+
+// 区域列表
+.zones-list {
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 64rpx;
+  padding-bottom: 128rpx;
+}
+
+.zone-card {
+  position: relative;
+  background: white;
+  border-radius: 64rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.03);
+  animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+  opacity: 0;
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(80rpx);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+// 状态标签
+.zone-status {
+  position: absolute;
+  top: 40rpx;
+  right: 40rpx;
+  z-index: 10;
+  background: rgba(255, 255, 255, 0.8);
+  backdrop-filter: blur(24rpx);
+  padding: 12rpx 24rpx;
+  border-radius: 100rpx;
+  font-size: 20rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.1);
+  display: flex;
+  align-items: center;
+  gap: 12rpx;
+  border: 2rpx solid rgba(255, 255, 255, 0.5);
+}
+
+.status-dot {
+  width: 12rpx;
+  height: 12rpx;
+  border-radius: 50%;
+}
+
+.status-dot-busy {
+  background: #ef4444;
+  animation: pulse 2s infinite;
+}
+
+.status-dot-moderate {
+  background: #f59e0b;
+}
+
+.status-dot-available {
+  background: #22c55e;
+}
+
+@keyframes pulse {
+  0%, 100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// 区域图片
+.zone-image {
+  height: 352rpx;
+  width: 100%;
+  position: relative;
+  overflow: hidden;
+}
+
+.zone-img {
+  width: 100%;
+  height: 100%;
+  transition: transform 1s;
+}
+
+.zone-card:active .zone-img {
+  transform: scale(1.05);
+}
+
+.zone-image-overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(to top, white, rgba(255, 255, 255, 0.1), transparent);
+}
+
+// 区域信息
+.zone-info {
+  padding: 64rpx;
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-end;
+  position: relative;
+  margin-top: -32rpx;
+}
+
+.zone-left {
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.zone-name {
+  font-family: 'Noto Serif SC', serif;
+  font-size: 40rpx;
+  font-weight: 500;
+  color: #1a1a1a;
+  background: rgba(255, 255, 255, 0.5);
+  backdrop-filter: blur(8rpx);
+  padding: 8rpx 16rpx;
+  border-radius: 16rpx;
+  margin-left: -16rpx;
+}
+
+.zone-tags {
+  display: flex;
+  gap: 16rpx;
+}
+
+.zone-tag {
+  font-size: 20rpx;
+  color: rgba(142, 142, 147, 0.7);
+  background: #f9fafb;
+  border: 2rpx solid #e5e7eb;
+  padding: 12rpx 20rpx;
+  border-radius: 16rpx;
+  letter-spacing: 0.1em;
+  font-weight: 500;
+}
+
+.zone-right {
+  display: flex;
+  flex-direction: column;
+  align-items: flex-end;
+  gap: 16rpx;
+}
+
+.zone-availability {
+  font-size: 18rpx;
+  color: #8e8e93;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.15em;
+  display: flex;
+  align-items: baseline;
+  gap: 4rpx;
+}
+
+.avail-count {
+  font-size: 40rpx;
+  font-weight: 700;
+  color: #1a1a1a;
+  margin-left: 8rpx;
+}
+
+.zone-meter {
+  width: 192rpx;
+  height: 16rpx;
+  background: #f3f4f6;
+  border-radius: 100rpx;
+  overflow: hidden;
+  padding: 4rpx;
+}
+
+.zone-meter-fill {
+  height: 100%;
+  border-radius: 100rpx;
+  transition: width 1s ease-out;
+}
+
+.meter-available {
+  background: #22c55e;
+}
+
+.meter-moderate {
+  background: #f59e0b;
+}
+
+.meter-busy {
+  background: #ef4444;
+}
+
+// 骨架屏
+.zones-skeleton {
+  padding: 48rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 64rpx;
+  padding-bottom: 128rpx;
+}
+
+.skeleton-card {
+  background: white;
+  border-radius: 64rpx;
+  overflow: hidden;
+  box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.03);
+}
+
+.skeleton-image {
+  height: 352rpx;
+  width: 100%;
+}
+
+.skeleton-content {
+  padding: 64rpx;
+  display: flex;
+  flex-direction: column;
+  gap: 24rpx;
+}
+
+.skeleton-title {
+  width: 200rpx;
+  height: 40rpx;
+  border-radius: 16rpx;
+}
+
+.skeleton-tags {
+  display: flex;
+  gap: 16rpx;
+}
+
+.skeleton-tag {
+  width: 120rpx;
+  height: 44rpx;
+  border-radius: 16rpx;
+}
+
+.skeleton-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.skeleton-text {
+  width: 150rpx;
+  height: 24rpx;
+  border-radius: 12rpx;
+}
+
+.skeleton-bar {
+  width: 192rpx;
+  height: 16rpx;
+  border-radius: 100rpx;
+}
+
+// 骨架屏动画
+.shimmer {
+  background: linear-gradient(90deg, #f0f0f0 25%, #e0e0e0 50%, #f0f0f0 75%);
+  background-size: 200% 100%;
+  animation: shimmer 1.5s infinite;
+}
+
+@keyframes shimmer {
+  0% {
+    background-position: 200% 0;
+  }
+  100% {
+    background-position: -200% 0;
+  }
 }
 
 // 高调图片滤镜
 .high-key-img {
   filter: contrast(0.95) brightness(1.05) saturate(0.9);
-}
-
-// 隐藏滚动条
-.hide-scrollbar::-webkit-scrollbar {
-  display: none;
-}
-.hide-scrollbar {
-  -ms-overflow-style: none;
-  scrollbar-width: none;
 }
 </style>

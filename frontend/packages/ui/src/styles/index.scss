@@ -7,6 +7,28 @@
  * 这里不需要再次导入，避免变量冲突
  */
 
+// ========== Material Symbols Outlined 图标全局样式 ==========
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24rpx;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
+  // 支持字体变体设置
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
+// Filled 图标变体
+.material-symbols-outlined.icon-filled {
+  font-variation-settings: 'FILL' 1, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+}
+
 // ========== 全局基础样式 ==========
 page {
   background-color: $color-bg-page;

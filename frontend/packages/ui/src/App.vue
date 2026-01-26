@@ -17,9 +17,28 @@
 
 <script setup lang="ts">
 import { computed } from 'vue';
-import { useToastStore } from '@zenspace/core/stores';
+import { onLaunch } from '@dcloudio/uni-app';
+import { useToastStore, useUserStore } from '@zenspace/core/stores';
+import { setupRouteGuard } from '@zenspace/core/composables';
 
 const toastStore = useToastStore();
+const userStore = useUserStore();
+
+// 应用启动时初始化
+onLaunch(async () => {
+  console.log('[App] 应用启动');
+
+  // 1. 恢复用户登录状态
+  await userStore.restore();
+
+  // 2. 设置路由守卫
+  setupRouteGuard();
+
+  console.log('[App] 初始化完成', {
+    isAuthenticated: userStore.isAuthenticated,
+    user: userStore.user,
+  });
+});
 
 const toastIcon = computed(() => {
   if (!toastStore.toast) return 'info';
