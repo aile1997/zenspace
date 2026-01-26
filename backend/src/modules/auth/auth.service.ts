@@ -4,6 +4,7 @@ import {
   BadRequestException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
+import { ConfigService } from '@nestjs/config';
 import { PrismaService } from '@prisma/prisma.service';
 import { RedisService } from '@redis/redis.service';
 import { LoginDto } from './dto/login.dto';
@@ -17,10 +18,13 @@ import { TokenPayload, AuthResponse } from './types/auth.types';
  */
 @Injectable()
 export class AuthService {
+  private readonly DEV_MODE_CODE = '123456'; // 开发环境固定验证码
+
   constructor(
     private prisma: PrismaService,
     private redis: RedisService,
     private jwtService: JwtService,
+    private configService: ConfigService,
   ) {}
 
   /**
@@ -61,19 +65,29 @@ export class AuthService {
   async login(dto: LoginDto): Promise<AuthResponse> {
     const { phone, code } = dto;
 
-    // 从 Redis 获取验证码
-    const storedCode = await this.redis.getVerificationCode(phone);
-    if (!storedCode) {
-      throw new UnauthorizedException('验证码已过期');
-    }
+    // 开发环境后门：使用固定验证码 123456 绕过 Redis 验证
+    const isDevMode = this.configService.get('NODE_ENV') !== 'production';
+    const useDevBackdoor = isDevMode && code === this.DEV_MODE_CODE;
 
-    // 验证验证码是否正确
-    if (storedCode !== code) {
-      throw new UnauthorizedException('验证码错误');
-    }
+    let storedCode: string | null = null;
 
-    // 验证成功后删除验证码
-    await this.redis.deleteVerificationCode(phone);
+    if (!useDevBackdoor) {
+      // 正常流程：从 Redis 获取验证码
+      storedCode = await this.redis.getVerificationCode(phone);
+      if (!storedCode) {
+        throw new UnauthorizedException('验证码已过期');
+      }
+
+      // 验证验证码是否正确
+      if (storedCode !== code) {
+        throw new UnauthorizedException('验证码错误');
+      }
+
+      // 验证成功后删除验证码
+      await this.redis.deleteVerificationCode(phone);
+    } else {
+      console.log(`🔓 开发模式后门登录: ${phone} (使用固定验证码)`);
+    }
 
     // 查找或创建用户
     let user = await this.prisma.user.findUnique({
