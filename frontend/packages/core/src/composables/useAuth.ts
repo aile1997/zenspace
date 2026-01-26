@@ -27,6 +27,11 @@ export function useAuth(options: UseAuthOptions) {
    * 发送验证码
    */
   const sendSmsCode = async (phone: string) => {
+    // 验证手机号格式
+    const phoneRegex = /^1[3-9]\d{9}$/;
+    if (!phoneRegex.test(phone)) {
+      throw new Error('手机号格式不正确');
+    }
     return http.post('/auth/send-code', { phone });
   };
 
@@ -34,6 +39,10 @@ export function useAuth(options: UseAuthOptions) {
    * 验证码登录
    */
   const smsLogin = async (dto: SmsLoginDTO) => {
+    // 验证验证码格式
+    if (!/^\d{6}$/.test(dto.code)) {
+      throw new Error('验证码格式不正确');
+    }
     const response = await http.post<LoginResponse>('/auth/sms-login', dto);
     await userStore.login(response);
     return response;
@@ -63,7 +72,9 @@ export function useAuth(options: UseAuthOptions) {
    * 刷新 Token
    */
   const refreshToken = async () => {
-    const response = await http.post<LoginResponse>('/auth/refresh');
+    const response = await http.post<LoginResponse>('/auth/refresh', {
+      token: userStore.token,
+    });
     await userStore.login(response);
     return response;
   };

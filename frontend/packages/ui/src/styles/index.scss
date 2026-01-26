@@ -1,0 +1,211 @@
+/**
+ * ZenSpace 全局样式入口
+ *
+ * 包含所有全局样式变量、混入和基础样式
+ *
+ * 注意：variables.scss 和 mixins.scss 已通过 vite.config.ts 全局注入
+ * 这里不需要再次导入，避免变量冲突
+ */
+
+// ========== 全局基础样式 ==========
+page {
+  background-color: $color-bg-page;
+  font-family: $font-family-sans;
+  font-size: $font-size-lg;
+  line-height: $line-height-normal;
+  color: $color-text-primary;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+// 去除点击高亮
+* {
+  -webkit-tap-highlight-color: transparent;
+}
+
+// 去除滚动条
+::-webkit-scrollbar {
+  display: none;
+}
+
+// ========== 通用工具类 ==========
+
+// Flex 布局
+.flex {
+  display: flex;
+}
+
+.flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+.flex-center {
+  @include flex-center;
+}
+
+.flex-between {
+  @include flex-between;
+}
+
+.flex-1 {
+  flex: 1;
+}
+
+// 文字对齐
+.text-left {
+  text-align: left;
+}
+
+.text-center {
+  text-align: center;
+}
+
+.text-right {
+  text-align: right;
+}
+
+// 间距工具类
+.mt-xs { margin-top: $spacing-xs; }
+.mt-sm { margin-top: $spacing-sm; }
+.mt-md { margin-top: $spacing-md; }
+.mt-lg { margin-top: $spacing-lg; }
+.mt-xl { margin-top: $spacing-xl; }
+
+.mb-xs { margin-bottom: $spacing-xs; }
+.mb-sm { margin-bottom: $spacing-sm; }
+.mb-md { margin-bottom: $spacing-md; }
+.mb-lg { margin-bottom: $spacing-lg; }
+.mb-xl { margin-bottom: $spacing-xl; }
+
+.p-xs { padding: $spacing-xs; }
+.p-sm { padding: $spacing-sm; }
+.p-md { padding: $spacing-md; }
+.p-lg { padding: $spacing-lg; }
+.p-xl { padding: $spacing-xl; }
+
+// 文字颜色
+.text-primary { color: $color-text-primary; }
+.text-secondary { color: $color-text-secondary; }
+.text-tertiary { color: $color-text-tertiary; }
+.text-accent { color: $color-accent; }
+.text-success { color: $color-success; }
+.text-warning { color: $color-warning; }
+.text-error { color: $color-error; }
+.text-white { color: $color-text-white; }
+
+// 背景色
+.bg-white { background-color: $color-bg-card; }
+.bg-gray { background-color: $color-bg-input; }
+.bg-primary { background-color: $color-primary; }
+.bg-success { background-color: $color-success; }
+
+// 圆角
+.rounded-xs { border-radius: $radius-xs; }
+.rounded-sm { border-radius: $radius-sm; }
+.rounded-md { border-radius: $radius-md; }
+.rounded-lg { border-radius: $radius-lg; }
+.rounded-xl { border-radius: $radius-xl; }
+.rounded-full { border-radius: $radius-full; }
+
+// 阴影
+.shadow-sm { box-shadow: $shadow-elevation-1; }
+.shadow-md { box-shadow: $shadow-elevation-2; }
+.shadow-lg { box-shadow: $shadow-elevation-3; }
+
+// 过渡动画
+.transition { transition: all $transition-base ease; }
+.transition-fast { transition: all $transition-fast ease; }
+.transition-slow { transition: all $transition-slow ease; }
+
+// 动画
+.animate-fade-in { @include fade-in; }
+.animate-scale-up { @include scale-up; }
+.animate-slide-up { @include slide-up; }
+
+// 玻璃态效果
+.glass { @include glass-card; }
+.glass-light { @include glass-card($glass-bg-light); }
+.glass-strong { @include glass-card($glass-bg-strong); }
+
+// 卡片
+.card { @include card-base; }
+
+// ========== 组件基础样式 ==========
+
+// 按钮
+.button {
+  @include flex-center;
+  border: none;
+  outline: none;
+  cursor: pointer;
+
+  &::after {
+    border: none;
+  }
+}
+
+// 输入框
+.input {
+  width: 100%;
+  height: $input-height;
+  padding: 0 $spacing-md;
+  background-color: $color-bg-input;
+  border-radius: $radius-md;
+  font-size: $font-size-lg;
+  color: $color-text-primary;
+
+  &::placeholder {
+    color: $color-text-placeholder;
+  }
+}
+
+// 徽章
+.badge {
+  @include flex-center;
+  padding: 4rpx 12rpx;
+  background-color: $color-error;
+  color: $color-text-white;
+  font-size: $font-size-xs;
+  border-radius: $radius-full;
+}
+
+// 标签
+.tag {
+  @include flex-center;
+  padding: 8rpx 16rpx;
+  background-color: $color-bg-input;
+  color: $color-text-secondary;
+  font-size: $font-size-sm;
+  border-radius: $radius-sm;
+  font-weight: $font-weight-medium;
+}
+
+// 分隔线
+.divider {
+  width: 100%;
+  height: 1rpx;
+  background-color: $color-border-base;
+}
+
+.divider-vertical {
+  width: 1rpx;
+  height: 100%;
+  background-color: $color-border-base;
+}
+
+// ========== 响应式 ==========
+
+// 小屏幕
+@media screen and (max-width: 600rpx) {
+  page {
+    font-size: $font-size-base;
+  }
+}
+
+// 大屏幕
+@media screen and (min-width: 900rpx) {
+  page {
+    font-size: $font-size-xl;
+  }
+}

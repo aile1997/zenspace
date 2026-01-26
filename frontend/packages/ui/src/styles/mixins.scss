@@ -1,0 +1,348 @@
+/**
+ * ZenSpace 通用样式混入
+ *
+ * 提供玻璃态效果、卡片样式、按钮样式等通用组件样式
+ */
+
+@import './variables.scss';
+
+// ========== 玻璃态效果 ==========
+@mixin glass-card($bg: $glass-bg-medium, $blur: $glass-blur) {
+  background-color: $bg;
+  backdrop-filter: blur($blur);
+  -webkit-backdrop-filter: blur($blur);
+  border: 1rpx solid $glass-border;
+  box-shadow: $shadow-glass;
+}
+
+@mixin glass-button {
+  background-color: rgba(255, 255, 255, 0.4);
+  backdrop-filter: blur(20px);
+  -webkit-backdrop-filter: blur(20px);
+  border: 1rpx solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.03);
+  transition: all $transition-base ease;
+
+  &:hover {
+    background-color: rgba(255, 255, 255, 0.6);
+    box-shadow: 0 8rpx 24rpx rgba(0, 0, 0, 0.06);
+  }
+
+  &:active {
+    transform: scale(0.95);
+  }
+}
+
+// ========== 卡片样式 ==========
+@mixin card-base {
+  background-color: $color-bg-card;
+  border-radius: $radius-xl;
+  box-shadow: $shadow-elevation-1;
+  border: 1rpx solid $color-border-light;
+  transition: all $transition-base ease;
+}
+
+@mixin card-hover {
+  &:hover {
+    box-shadow: $shadow-elevation-2;
+    transform: translateY(-4rpx);
+  }
+}
+
+@mixin card-press {
+  &:active {
+    transform: scale(0.99);
+  }
+}
+
+// ========== 按钮样式 ==========
+@mixin button-primary {
+  background-color: $color-primary;
+  color: $color-text-white;
+  border-radius: $radius-lg;
+  padding: 24rpx 48rpx;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  border: none;
+  box-shadow: $shadow-elevation-1;
+  transition: all $transition-base ease;
+
+  &:hover {
+    background-color: $color-primary-light;
+    box-shadow: $shadow-elevation-2;
+  }
+
+  &:active {
+    transform: scale(0.98);
+  }
+}
+
+@mixin button-secondary {
+  background-color: transparent;
+  color: $color-text-primary;
+  border-radius: $radius-lg;
+  padding: 24rpx 48rpx;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  border: 1rpx solid $color-border-base;
+  transition: all $transition-base ease;
+
+  &:hover {
+    border-color: $color-primary;
+    color: $color-primary;
+  }
+
+  &:active {
+    background-color: $color-bg-input;
+  }
+}
+
+@mixin button-ghost {
+  background-color: transparent;
+  color: $color-text-secondary;
+  border-radius: $radius-lg;
+  padding: 24rpx 48rpx;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-medium;
+  border: none;
+  transition: color $transition-fast ease;
+
+  &:hover {
+    color: $color-text-primary;
+  }
+
+  &:active {
+    opacity: $opacity-pressed;
+  }
+}
+
+// ========== 文字样式 ==========
+@mixin text-title {
+  font-family: $font-family-serif;
+  font-size: $font-size-5xl;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+  letter-spacing: -0.02em;
+}
+
+@mixin text-subtitle {
+  font-family: $font-family-serif;
+  font-size: $font-size-3xl;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-tight;
+  color: $color-text-primary;
+}
+
+@mixin text-body {
+  font-family: $font-family-sans;
+  font-size: $font-size-lg;
+  font-weight: $font-weight-normal;
+  line-height: $line-height-normal;
+  color: $color-text-secondary;
+}
+
+@mixin text-caption {
+  font-family: $font-family-sans;
+  font-size: $font-size-sm;
+  font-weight: $font-weight-medium;
+  line-height: $line-height-normal;
+  color: $color-text-tertiary;
+  text-transform: uppercase;
+  letter-spacing: 0.1em;
+}
+
+// ========== Flex 布局 ==========
+@mixin flex-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+
+@mixin flex-between {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+@mixin flex-column {
+  display: flex;
+  flex-direction: column;
+}
+
+// ========== 绝对居中 ==========
+@mixin absolute-center {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
+// ========== 隐藏滚动条 ==========
+@mixin hide-scrollbar {
+  &::-webkit-scrollbar {
+    display: none;
+  }
+
+  -ms-overflow-style: none;
+  scrollbar-width: none;
+}
+
+// ========== 文本溢出 ==========
+@mixin text-ellipsis {
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@mixin text-clamp($lines: 2) {
+  display: -webkit-box;
+  -webkit-line-clamp: $lines;
+  -webkit-box-orient: vertical;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+// ========== 安全区域 ==========
+@mixin safe-area-top {
+  padding-top: calc(#{$header-height} + env(safe-area-inset-top));
+}
+
+@mixin safe-area-bottom {
+  padding-bottom: calc(#{$tab-bar-height} + env(safe-area-inset-bottom));
+}
+
+// ========== 动画 ==========
+@mixin fade-in($duration: $transition-base) {
+  animation: fadeIn $duration ease-out forwards;
+}
+
+@mixin scale-up($duration: $transition-base) {
+  animation: scaleUp $duration ease-out forwards;
+}
+
+@mixin slide-up($duration: $transition-base) {
+  animation: slideUp $duration ease-out forwards;
+}
+
+// 动画关键帧需要定义在全局样式中
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes scaleUp {
+  from {
+    transform: scale(0.8);
+    opacity: 0;
+  }
+
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes slideUp {
+  from {
+    transform: translateY(100%);
+    opacity: 0;
+  }
+
+  to {
+    transform: translateY(0);
+    opacity: 1;
+  }
+}
+
+// ========== 图片效果 ==========
+@mixin high-key-image {
+  filter: contrast(0.95) brightness(1.05) saturate(0.9);
+}
+
+// ========== 网格背景 ==========
+@mixin grid-bg($size: 24rpx, $color: $color-border-light) {
+  background-image: radial-gradient($color 1rpx, transparent 1rpx);
+  background-size: $size $size;
+}
+
+// ========== 脉冲动画 ==========
+@mixin pulse($color: $color-success) {
+  position: relative;
+
+  &::before {
+    content: '';
+    position: absolute;
+    width: 100%;
+    height: 100%;
+    top: 0;
+    left: 0;
+    border-radius: inherit;
+    background-color: $color;
+    animation: pulse-animation 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+  }
+}
+
+@keyframes pulse-animation {
+  0%,
+  100% {
+    opacity: 1;
+  }
+
+  50% {
+    opacity: 0.5;
+  }
+}
+
+// ========== 进度条 ==========
+@mixin progress-bar($height: 8rpx, $radius: $radius-xs) {
+  height: $height;
+  background-color: $color-bg-input;
+  border-radius: $radius;
+  overflow: hidden;
+
+  .progress-fill {
+    height: 100%;
+    background-color: $color-primary;
+    border-radius: $radius;
+    transition: width 1s ease;
+  }
+}
+
+// ========== 加载状态 ==========
+@mixin loading-spinner($size: 40rpx, $color: $color-primary) {
+  width: $size;
+  height: $size;
+  border: 3rpx solid rgba($color, 0.1);
+  border-top-color: $color;
+  border-radius: 50%;
+  animation: spin 1s linear infinite;
+}
+
+@keyframes spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+// ========== 悬浮效果 ==========
+@mixin float {
+  box-shadow: $shadow-float;
+  animation: float 3s ease-in-out infinite;
+}
+
+@keyframes float {
+  0%,
+  100% {
+    transform: translateY(0);
+  }
+
+  50% {
+    transform: translateY(-10rpx);
+  }
+}

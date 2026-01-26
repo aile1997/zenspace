@@ -5,5 +5,12 @@
   "testRegex": ".e2e-spec.ts$",
   "transform": {
     "^.+\\.(t|j)s$": "ts-jest"
-  }
+  },
+  "moduleNameMapper": {
+    "^@common/(.*)$": "<rootDir>/../src/common/$1",
+    "^@modules/(.*)$": "<rootDir>/../src/modules/$1",
+    "^@prisma/prisma\\.service$": "<rootDir>/../src/prisma/prisma.service",
+    "^@redis/(.*)$": "<rootDir>/../src/redis/$1"
+  },
+  "setupFilesAfterEnv": ["<rootDir>/jest-e2e.setup.ts"]
 }

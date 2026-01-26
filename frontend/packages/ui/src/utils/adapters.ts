@@ -59,7 +59,7 @@ export class UniHttp implements IHttp {
       uni.request({
         url: fullUrl,
         method,
-        data,
+        data: data as Record<string, unknown>,
         header: {
           'Content-Type': 'application/json',
           ...(token ? { Authorization: `Bearer ${token}` } : {}),
