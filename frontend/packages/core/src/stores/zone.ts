@@ -61,7 +61,7 @@ export const useZoneStore = defineStore('zone', () => {
     error.value = null;
 
     try {
-      const response = await http.get<ZonesResponse>('/zones');
+      const response = await http.get<ZonesResponse>('/booking/zones');
       zones.value = response.zones;
     } catch (err) {
       error.value = err instanceof Error ? err.message : '获取区域列表失败';

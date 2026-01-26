@@ -13,6 +13,7 @@ export const useUserStore = defineStore('user', () => {
   // ========== 状态 ==========
   const user = ref<User | null>(null);
   const token = ref<string>('');
+  const refreshToken = ref<string>('');
 
   // ========== 计算属性 ==========
   const isAuthenticated = computed(() => !!token.value);
@@ -28,11 +29,13 @@ export const useUserStore = defineStore('user', () => {
   const login = async (response: LoginResponse) => {
     user.value = response.user;
     token.value = response.token;
+    refreshToken.value = response.refreshToken;
 
     // 持久化到存储
     const { storage } = getAdapters();
     await storage.set('user', response.user);
     await storage.set('token', response.token);
+    await storage.set('refreshToken', response.refreshToken);
   };
 
   /**
@@ -41,10 +44,12 @@ export const useUserStore = defineStore('user', () => {
   const logout = async () => {
     user.value = null;
     token.value = '';
+    refreshToken.value = '';
 
     const { storage } = getAdapters();
     await storage.remove('user');
     await storage.remove('token');
+    await storage.remove('refreshToken');
   };
 
   /**
@@ -54,10 +59,12 @@ export const useUserStore = defineStore('user', () => {
     const { storage } = getAdapters();
     const savedUser = await storage.get<User>('user');
     const savedToken = await storage.get<string>('token');
+    const savedRefreshToken = await storage.get<string>('refreshToken');
 
     if (savedUser && savedToken) {
       user.value = savedUser;
       token.value = savedToken;
+      refreshToken.value = savedRefreshToken ?? '';
     }
   };
 
@@ -83,6 +90,7 @@ export const useUserStore = defineStore('user', () => {
     // 状态
     user,
     token,
+    refreshToken,
 
     // 计算属性
     isAuthenticated,

@@ -36,6 +36,7 @@ main (受保护的生产分支)
 **用途**: 生产就绪的稳定代码
 
 **规则**:
+
 - ✅ 只接受来自 `develop` 的合并
 - ✅ 必须通过 Architect review（评分 ≥ 4.0）
 - ✅ 必须通过所有测试
@@ -43,6 +44,7 @@ main (受保护的生产分支)
 - ❌ 禁止 force push
 
 **提交要求**:
+
 - 代码质量评分 ≥ 4.0/5.0
 - 测试覆盖率 ≥ 80%
 - 无 P0/P1 级别问题
@@ -54,6 +56,7 @@ main (受保护的生产分支)
 **用途**: 日常开发的主分支
 
 **规则**:
+
 - ✅ Builder 的主要工作分支
 - ✅ 可以直接 push
 - ✅ 允许存在小 bug，快速迭代
@@ -63,6 +66,7 @@ main (受保护的生产分支)
 **命名**: `develop`
 
 **创建方式**:
+
 ```bash
 # 从 main 创建 develop 分支
 git checkout main
@@ -73,17 +77,19 @@ git push -u origin develop
 
 ---
 
-### 3. claude/* 分支
+### 3. claude/\* 分支
 
 **用途**: Architect 专用，用于架构设计和文档
 
 **规则**:
+
 - ✅ Architect 专用分支
 - ✅ 只包含 `.claude/` 目录的变更和文档
 - ✅ review 通过后合并到 main
 - ✅ 分支名必须以 `claude/` 开头，以 session ID 结尾
 
 **命名规范**:
+
 ```
 claude/<描述>-<sessionId>
 
@@ -215,20 +221,21 @@ git push origin develop
 
 ### Type 类型
 
-| Type | 说明 | 示例 |
-|------|------|------|
-| `feat` | 新功能 | `feat(auth): 实现手机验证码登录` |
-| `fix` | Bug 修复 | `fix(booking): 修复重复预约问题` |
-| `docs` | 文档变更 | `docs(architect): 更新架构设计文档` |
-| `test` | 测试相关 | `test(auth): 补充登录 API 测试用例` |
-| `refactor` | 重构 | `refactor(core): 优化适配器注入逻辑` |
-| `perf` | 性能优化 | `perf(booking): 优化座位查询缓存` |
-| `style` | 代码格式 | `style(ui): 统一组件命名规范` |
-| `chore` | 构建/配置 | `chore(deps): 升级 NestJS 到 v11` |
+| Type       | 说明      | 示例                                 |
+| ---------- | --------- | ------------------------------------ |
+| `feat`     | 新功能    | `feat(auth): 实现手机验证码登录`     |
+| `fix`      | Bug 修复  | `fix(booking): 修复重复预约问题`     |
+| `docs`     | 文档变更  | `docs(architect): 更新架构设计文档`  |
+| `test`     | 测试相关  | `test(auth): 补充登录 API 测试用例`  |
+| `refactor` | 重构      | `refactor(core): 优化适配器注入逻辑` |
+| `perf`     | 性能优化  | `perf(booking): 优化座位查询缓存`    |
+| `style`    | 代码格式  | `style(ui): 统一组件命名规范`        |
+| `chore`    | 构建/配置 | `chore(deps): 升级 NestJS 到 v11`    |
 
 ### Scope 范围
 
 **后端**:
+
 - `auth` - 认证模块
 - `booking` - 预约模块
 - `user` - 用户模块
@@ -236,12 +243,14 @@ git push origin develop
 - `admin` - 管理模块
 
 **前端**:
+
 - `ui` - UI 组件
 - `core` - 核心逻辑
 - `pages` - 页面
 - `stores` - 状态管理
 
 **基础设施**:
+
 - `infra` - 基础设施
 - `architect` - 架构设计
 - `ci` - CI/CD
@@ -272,27 +281,32 @@ git commit -m "update code"  # ❌ 无意义
 Architect review 代码时检查以下项目：
 
 #### ✅ 功能完整性
+
 - [ ] 所有 Ticket 要求的功能都已实现
 - [ ] 边界情况已处理
 - [ ] 错误处理完善
 
 #### ✅ 测试覆盖
+
 - [ ] 单元测试覆盖率 ≥ 80%
 - [ ] 关键路径有集成测试
 - [ ] 测试用例覆盖 Happy Path 和 Unhappy Path
 
 #### ✅ 代码质量
+
 - [ ] 符合命名规范（英文语义化）
 - [ ] 注释完整（简体中文）
 - [ ] 无硬编码配置
 - [ ] 无安全漏洞（SQL 注入、XSS、CSRF 等）
 
 #### ✅ 架构一致性
+
 - [ ] 遵循 Interface Fence Rule（前端）
 - [ ] 遵循分层架构（后端）
 - [ ] 使用适配器模式（前端平台 API）
 
 #### ✅ 文档完整性
+
 - [ ] API 文档更新（Swagger）
 - [ ] README 更新（如有必要）
 - [ ] Ticket 状态更新
@@ -301,13 +315,13 @@ Architect review 代码时检查以下项目：
 
 ## 🎯 Review 评分标准
 
-| 评分 | 级别 | 说明 | 操作 |
-|------|------|------|------|
-| 5.0 | Excellent | 完美，可直接合并 | ✅ 立即合并到 main |
-| 4.5-4.9 | Very Good | 优秀，小改进后合并 | ⚠️ 微调后合并 |
-| 4.0-4.4 | Good | 良好，需要改进 | ⚠️ 修复后合并 |
-| 3.0-3.9 | Needs Work | 需要返工 | ❌ 打回重做 |
-| <3.0 | Poor | 不合格 | ❌ 拒绝合并 |
+| 评分    | 级别       | 说明               | 操作               |
+| ------- | ---------- | ------------------ | ------------------ |
+| 5.0     | Excellent  | 完美，可直接合并   | ✅ 立即合并到 main |
+| 4.5-4.9 | Very Good  | 优秀，小改进后合并 | ⚠️ 微调后合并      |
+| 4.0-4.4 | Good       | 良好，需要改进     | ⚠️ 修复后合并      |
+| 3.0-3.9 | Needs Work | 需要返工           | ❌ 打回重做        |
+| <3.0    | Poor       | 不合格             | ❌ 拒绝合并        |
 
 **合并标准**: 评分 ≥ 4.0 且无 P0/P1 问题
 
@@ -396,10 +410,10 @@ git log main..develop --oneline
 
 ### 核心要点
 
-1. **只需 3 个分支** - main、develop、claude/*
+1. **只需 3 个分支** - main、develop、claude/\*
 2. **develop 是主战场** - Builder 所有开发都在 develop
 3. **main 受保护** - 只接受 review 通过的代码（≥ 4.0）
-4. **claude/* 用于架构** - Architect 的文档和 Tickets
+4. **claude/\* 用于架构** - Architect 的文档和 Tickets
 5. **遵循 Conventional Commits** - 保持提交历史清晰
 
 ### 优势
@@ -412,13 +426,13 @@ git log main..develop --oneline
 
 ### 与复杂工作流的对比
 
-| 特性 | 简化版（3分支） | 复杂版（5+分支） |
-|------|----------------|-----------------|
-| 分支数量 | 3 个 | 5+ 个 |
-| 学习成本 | 低 | 高 |
-| 管理成本 | 低 | 高 |
-| 适用团队 | 小团队（2-5人） | 大团队（10+人） |
-| 灵活性 | 高 | 中 |
+| 特性     | 简化版（3分支） | 复杂版（5+分支） |
+| -------- | --------------- | ---------------- |
+| 分支数量 | 3 个            | 5+ 个            |
+| 学习成本 | 低              | 高               |
+| 管理成本 | 低              | 高               |
+| 适用团队 | 小团队（2-5人） | 大团队（10+人）  |
+| 灵活性   | 高              | 中               |
 
 ---
 

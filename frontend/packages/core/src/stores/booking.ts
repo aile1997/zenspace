@@ -20,7 +20,7 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const createBooking = async (dto: CreateBookingDTO) => {
     const { http } = getAdapters();
-    const result = await http.post<Booking>('/bookings', dto);
+    const result = await http.post<Booking>('/booking/bookings', dto);
 
     bookings.value.unshift(result);
     currentBooking.value = result;
@@ -33,7 +33,7 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const cancelBooking = async (bookingId: string) => {
     const { http } = getAdapters();
-    await http.delete(`/bookings/${bookingId}`);
+    await http.delete(`/booking/bookings/${bookingId}`);
 
     const index = bookings.value.findIndex((b) => b.id === bookingId);
     if (index !== -1) {
@@ -49,7 +49,7 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const checkIn = async (bookingId: string) => {
     const { http } = getAdapters();
-    const result = await http.post<Booking>(`/bookings/${bookingId}/check-in`);
+    const result = await http.post<Booking>(`/booking/bookings/${bookingId}/check-in`);
 
     const index = bookings.value.findIndex((b) => b.id === bookingId);
     if (index !== -1) {
@@ -64,7 +64,7 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const checkOut = async (bookingId: string) => {
     const { http } = getAdapters();
-    const result = await http.post<Booking>(`/bookings/${bookingId}/check-out`);
+    const result = await http.post<Booking>(`/booking/bookings/${bookingId}/check-out`);
 
     const index = bookings.value.findIndex((b) => b.id === bookingId);
     if (index !== -1) {
@@ -79,7 +79,7 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const fetchBookings = async () => {
     const { http } = getAdapters();
-    const result = await http.get<Booking[]>('/bookings');
+    const result = await http.get<Booking[]>('/booking/bookings');
     bookings.value = result;
   };
 

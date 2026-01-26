@@ -46,11 +46,19 @@ export class BookingService {
           : 0;
 
       return {
-        ...zone,
+        id: zone.id,
+        name: zone.name,
+        floor: zone.floor,
+        description: zone.description,
         capacity: totalSeats,
         availableSeats,
         occupancyRate,
         status: this.calculateZoneStatus(occupancyRate),
+        hourlyPrice: Number(zone.hourlyPrice),
+        features: zone.tags || [],  // 将 tags 映射为 features
+        openTime: zone.openTime || '08:00',
+        closeTime: zone.closeTime || '22:00',
+        imageUrl: zone.imageUrl,
       };
     });
   }
@@ -84,15 +92,21 @@ export class BookingService {
 
     return {
       zone,
-      seats: seats.map((seat) => ({
-        id: seat.id,
-        x: seat.x,
-        y: seat.y,
-        label: seat.label,
-        status: this.calculateSeatStatus(seat.bookings),
-        type: seat.type,
-        currentBooking: seat.bookings[0] || null,
-      })),
+      seats: seats.map((seat) => {
+        const status = this.calculateSeatStatus(seat.bookings);
+        return {
+          id: seat.id,
+          row: String.fromCharCode(65 + seat.y),  // 将 y 映射为行号 A, B, C...
+          column: seat.x + 1,                      // 将 x 映射为列号 1, 2, 3...
+          number: seat.label,
+          status: status === 'available' ? 'available' : 'occupied',
+          type: seat.type,
+          features: [],  // 座位特色可以后续从数据库添加
+          currentBooking: seat.bookings[0] ? {
+            endTime: `${seat.bookings[0].bookingDate}T${seat.bookings[0].endTime}:00`,
+          } : null,
+        };
+      }),
     };
   }
 

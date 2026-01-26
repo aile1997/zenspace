@@ -43,7 +43,7 @@ export function useAuth(options: UseAuthOptions) {
     if (!/^\d{6}$/.test(dto.code)) {
       throw new Error('验证码格式不正确');
     }
-    const response = await http.post<LoginResponse>('/auth/sms-login', dto);
+    const response = await http.post<LoginResponse>('/auth/login', dto);
     await userStore.login(response);
     return response;
   };
@@ -73,7 +73,7 @@ export function useAuth(options: UseAuthOptions) {
    */
   const refreshToken = async () => {
     const response = await http.post<LoginResponse>('/auth/refresh', {
-      token: userStore.token,
+      refreshToken: userStore.refreshToken,
     });
     await userStore.login(response);
     return response;

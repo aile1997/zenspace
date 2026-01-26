@@ -68,15 +68,27 @@ export class UniHttp implements IHttp {
           if (res.statusCode >= 200 && res.statusCode < 300) {
             resolve(res.data as T);
           } else if (res.statusCode === 401) {
-            // Token 过期，清除登录信息
+            // Token 过期或未登录，清除登录信息
             uni.removeStorageSync('token');
+            uni.removeStorageSync('refreshToken');
             uni.removeStorageSync('user');
-            reject(new Error('登录已过期'));
+
+            // 重定向到登录页
+            uni.reLaunch({
+              url: '/pages/login/index',
+            });
+
+            reject(new Error('登录已过期，请重新登录'));
+          } else if (res.statusCode === 500) {
+            // 服务器错误
+            console.error('[UniHttp] 服务器错误:', res.data);
+            reject(new Error('服务器错误，请稍后重试'));
           } else {
             reject(new Error((res.data as any)?.message || '请求失败'));
           }
         },
         fail: (err) => {
+          console.error('[UniHttp] 网络错误:', err);
           reject(new Error(err.errMsg || '网络请求失败'));
         },
       });
