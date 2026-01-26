@@ -23,7 +23,7 @@ export interface User {
 /** 登录响应 */
 export interface LoginResponse {
   user: User;
-  token: string;
+  accessToken: string;
   refreshToken: string;
 }
 

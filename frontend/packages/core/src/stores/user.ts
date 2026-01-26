@@ -28,13 +28,13 @@ export const useUserStore = defineStore('user', () => {
    */
   const login = async (response: LoginResponse) => {
     user.value = response.user;
-    token.value = response.token;
+    token.value = response.accessToken;
     refreshToken.value = response.refreshToken;
 
     // 持久化到存储
     const { storage } = getAdapters();
     await storage.set('user', response.user);
-    await storage.set('token', response.token);
+    await storage.set('token', response.accessToken);
     await storage.set('refreshToken', response.refreshToken);
   };
 

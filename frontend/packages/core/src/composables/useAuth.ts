@@ -27,23 +27,37 @@ export function useAuth(options: UseAuthOptions) {
    * 发送验证码
    */
   const sendSmsCode = async (phone: string) => {
+    console.log('[useAuth] sendSmsCode 开始', phone);
+
     // 验证手机号格式
     const phoneRegex = /^1[3-9]\d{9}$/;
     if (!phoneRegex.test(phone)) {
+      console.error('[useAuth] 手机号格式错误', phone);
       throw new Error('手机号格式不正确');
     }
-    return http.post('/auth/send-code', { phone });
+
+    console.log('[useAuth] 发送验证码请求到 /auth/send-code');
+    const result = await http.post('/auth/send-code', { phone });
+    console.log('[useAuth] 验证码发送响应', result);
+    return result;
   };
 
   /**
    * 验证码登录
    */
   const smsLogin = async (dto: SmsLoginDTO) => {
+    console.log('[useAuth] smsLogin 开始', dto);
+
     // 验证验证码格式
     if (!/^\d{6}$/.test(dto.code)) {
+      console.error('[useAuth] 验证码格式错误', dto.code);
       throw new Error('验证码格式不正确');
     }
+
+    console.log('[useAuth] 发送登录请求到 /auth/login');
     const response = await http.post<LoginResponse>('/auth/login', dto);
+    console.log('[useAuth] 登录响应', response);
+
     await userStore.login(response);
     return response;
   };
