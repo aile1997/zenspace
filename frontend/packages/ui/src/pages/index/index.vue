@@ -49,37 +49,68 @@
 
       <!-- Stats Card -->
       <view class="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 flex flex-col gap-8 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-white">
-        <!-- 1F 综合阅览区 -->
-        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('1f')">
-          <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">1F 综合阅览区</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">82<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
+        <!-- 加载状态骨架屏 -->
+        <template v-if="zoneStore.loading">
+          <view v-for="i in 3" :key="i" class="flex flex-col gap-3">
+            <view class="flex justify-between items-end">
+              <view class="h-4 w-32 bg-gray-200 rounded animate-pulse"></view>
+              <view class="h-6 w-12 bg-gray-200 rounded animate-pulse"></view>
+            </view>
+            <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
+              <view class="h-full bg-gray-200 w-1/2 rounded-full animate-pulse"></view>
+            </view>
           </view>
-          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
-            <view class="h-full bg-gradient-to-r from-gray-600 via-gray-800 to-black w-[82%] rounded-full shadow-sm transition-all duration-1000 group-hover:w-[85%]"></view>
-          </view>
-        </view>
+        </template>
 
-        <!-- 2F 静音研讨室 -->
-        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('2f')">
-          <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">2F 静音研讨室</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">45<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
+        <!-- 真实数据 -->
+        <template v-else>
+          <view
+            v-for="zone in formattedZones"
+            :key="zone.id"
+            class="flex flex-col gap-3 group cursor-pointer"
+            @tap="handleZoneClick(zone.id)"
+          >
+            <view class="flex justify-between items-end">
+              <view class="flex items-center gap-2">
+                <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">
+                  {{ zone.floorLabel }}
+                </text>
+                <view
+                  :class="[
+                    'px-2 py-0.5 rounded-full text-[10px] font-medium',
+                    zone.status === 'BUSY' ? 'bg-red-100 text-red-600' :
+                    zone.status === 'MODERATE' ? 'bg-yellow-100 text-yellow-600' :
+                    'bg-green-100 text-green-600'
+                  ]"
+                >
+                  <text>{{ getStatusText(zone.status) }}</text>
+                </view>
+              </view>
+              <text class="font-display text-xl text-primary font-bold leading-none">
+                {{ Math.round(zone.occupancyRate) }}
+                <text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text>
+              </text>
+            </view>
+            <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
+              <view
+                :class="['h-full bg-gradient-to-r rounded-full shadow-sm transition-all duration-1000', zone.gradientClass]"
+                :style="{ width: zone.occupancyRate + '%' }"
+              ></view>
+            </view>
+            <view class="flex items-center justify-between mt-1">
+              <text class="text-[10px] text-gray-400">
+                剩余 {{ zone.availableSeats }} / {{ zone.capacity }} 座位
+              </text>
+              <text class="text-[10px] text-accent font-medium">
+                ¥{{ zone.hourlyPrice }}/时
+              </text>
+            </view>
           </view>
-          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
-            <view class="h-full bg-gradient-to-r from-gray-300 to-gray-500 w-[45%] rounded-full transition-all duration-1000 group-hover:w-[48%]"></view>
-          </view>
-        </view>
+        </template>
 
-        <!-- 3F 开放协作台 -->
-        <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('3f')">
-          <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">3F 开放协作台</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">12<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
-          </view>
-          <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
-            <view class="h-full bg-gradient-to-r from-gray-200 to-gray-300 w-[12%] rounded-full transition-all duration-1000 group-hover:w-[15%]"></view>
-          </view>
+        <!-- 空状态 -->
+        <view v-if="!zoneStore.loading && formattedZones.length === 0" class="text-center py-8">
+          <text class="text-gray-400">暂无可用区域</text>
         </view>
       </view>
     </view>
@@ -140,14 +171,52 @@
 </template>
 
 <script setup lang="ts">
-import { onMounted } from 'vue';
-import { useUserStore } from '@zenspace/core/stores';
+import { onMounted, computed } from 'vue';
+import { useUserStore, useZoneStore } from '@zenspace/core/stores';
 
 const userStore = useUserStore();
+const zoneStore = useZoneStore();
+
+// 计算属性：格式化的区域列表
+const formattedZones = computed(() => {
+  return zoneStore.zones.map(zone => ({
+    ...zone,
+    floorLabel: `${zone.floor}F ${zone.name}`,
+    gradientClass: getGradientClass(zone.occupancyRate),
+  }));
+});
+
+// 根据占用率获取渐变样式类名
+const getGradientClass = (rate: number) => {
+  if (rate >= 80) return 'from-gray-600 via-gray-800 to-black';
+  if (rate >= 50) return 'from-gray-300 to-gray-500';
+  return 'from-gray-200 to-gray-300';
+};
+
+// 获取状态文本
+const getStatusText = (status: string) => {
+  const statusMap: Record<string, string> = {
+    BUSY: '繁忙',
+    MODERATE: '适中',
+    AVAILABLE: '空闲',
+  };
+  return statusMap[status] || '未知';
+};
 
 onMounted(async () => {
-  // 恢复用户登录状态
-  await userStore.restore();
+  try {
+    // 恢复用户登录状态
+    await userStore.restore();
+
+    // 加载区域数据
+    await zoneStore.fetchZones();
+  } catch (error) {
+    console.error('加载数据失败:', error);
+    uni.showToast({
+      title: '加载失败，请重试',
+      icon: 'none',
+    });
+  }
 });
 
 // 切换位置
