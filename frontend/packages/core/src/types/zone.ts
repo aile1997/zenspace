@@ -9,11 +9,11 @@ export interface Zone {
   floor: string;
   capacity: number;
   hourlyPrice: number;
-  vipPrice: number;
   tags: string[];
   imageUrl?: string;
-  occupancy: number; // 0-100 拥挤度百分比
+  occupancyRate: number; // 0-100 占用率百分比
   availableSeats: number;
+  status: 'BUSY' | 'MODERATE' | 'AVAILABLE'; // 区域状态
 }
 
 /** 区域类型 */

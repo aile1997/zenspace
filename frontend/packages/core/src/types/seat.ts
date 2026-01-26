@@ -20,10 +20,13 @@ export enum SeatStatus {
 /** 座位信息 */
 export interface Seat {
   id: string;
-  zoneId: string;
   label: string; // 例如 "A1"
   type: SeatType;
   status: SeatStatus;
   x: number; // 网格列索引
   y: number; // 网格行索引
+  bookings?: Array<{
+    startTime: string;
+    endTime: string;
+  }>; // 当天的预约信息
 }

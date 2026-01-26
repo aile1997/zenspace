@@ -15,28 +15,27 @@ export enum BookingStatus {
 /** 预约信息 */
 export interface Booking {
   id: string;
-  userId: string;
-  zoneId: string;
-  zoneName: string;
-  seatId: string;
-  seatLabel: string;
-  bookingDate: string; // ISO 格式日期
+  seat: {
+    label: string;
+    zone: {
+      name: string;
+      floor: string;
+    };
+  };
+  bookingDate: string | Date; // ISO 格式日期
   startTime: string; // HH:mm 格式
   endTime: string; // HH:mm 格式
   status: BookingStatus;
-  checkInAt?: string;
-  checkOutAt?: string;
   amount: number;
-  qrCode?: string;
-  createdAt: string;
+  canCancel?: boolean; // 是否可取消
 }
 
 /** 创建预约 DTO */
 export interface CreateBookingDTO {
   seatId: string;
-  date: string;
-  startTime: string;
-  endTime: string;
+  bookingDate: string; // YYYY-MM-DD 格式
+  startTime: string; // HH:mm 格式
+  duration: number; // 时长（小时）
 }
 
 /** 取消预约响应 */

@@ -4,4 +4,5 @@
 
 export * from './user';
 export * from './booking';
+export * from './zone';
 export * from './toast';

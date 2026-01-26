@@ -20,12 +20,12 @@ export const useBookingStore = defineStore('booking', () => {
    */
   const createBooking = async (dto: CreateBookingDTO) => {
     const { http } = getAdapters();
-    const result = await http.post<Booking>('/bookings', dto);
+    const result = await http.post<{ booking: Booking }>('/bookings', dto);
 
-    bookings.value.unshift(result);
-    currentBooking.value = result;
+    bookings.value.unshift(result.booking);
+    currentBooking.value = result.booking;
 
-    return result;
+    return result.booking;
   };
 
   /**
@@ -39,48 +39,33 @@ export const useBookingStore = defineStore('booking', () => {
     if (index !== -1) {
       bookings.value[index] = {
         ...bookings.value[index],
-        status: 'cancelled' as BookingStatus,
+        status: BookingStatus.CANCELLED,
       };
     }
   };
 
   /**
-   * 签到
-   */
-  const checkIn = async (bookingId: string) => {
-    const { http } = getAdapters();
-    const result = await http.post<Booking>(`/bookings/${bookingId}/check-in`);
-
-    const index = bookings.value.findIndex((b) => b.id === bookingId);
-    if (index !== -1) {
-      bookings.value[index] = result;
-    }
-
-    return result;
-  };
-
-  /**
-   * 签退
-   */
-  const checkOut = async (bookingId: string) => {
-    const { http } = getAdapters();
-    const result = await http.post<Booking>(`/bookings/${bookingId}/check-out`);
-
-    const index = bookings.value.findIndex((b) => b.id === bookingId);
-    if (index !== -1) {
-      bookings.value[index] = result;
-    }
-
-    return result;
-  };
-
-  /**
    * 获取用户预约列表
    */
-  const fetchBookings = async () => {
+  const fetchBookings = async (status?: BookingStatus, page = 1, limit = 20) => {
     const { http } = getAdapters();
-    const result = await http.get<Booking[]>('/bookings');
-    bookings.value = result;
+    const params = new URLSearchParams();
+    if (status) params.append('status', status);
+    params.append('page', page.toString());
+    params.append('limit', limit.toString());
+
+    const result = await http.get<{
+      bookings: Booking[];
+      pagination: {
+        total: number;
+        page: number;
+        limit: number;
+        totalPages: number;
+      };
+    }>(`/bookings/my?${params.toString()}`);
+
+    bookings.value = result.bookings;
+    return result;
   };
 
   /**
