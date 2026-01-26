@@ -118,31 +118,33 @@ export class AuthService {
    * @returns 新的访问令牌
    */
   async refreshTokens(refreshToken: string): Promise<{ accessToken: string }> {
+    let payload: TokenPayload;
+
     try {
       // 验证刷新令牌
-      const payload = this.jwtService.verify<TokenPayload>(refreshToken);
-
-      // 从 Redis 获取存储的刷新令牌
-      const storedRefreshToken = await this.redis.getRefreshToken(payload.sub);
-      if (!storedRefreshToken) {
-        throw new UnauthorizedException('刷新令牌已过期');
-      }
-
-      // 验证刷新令牌是否匹配
-      if (storedRefreshToken !== refreshToken) {
-        throw new UnauthorizedException('刷新令牌无效');
-      }
-
-      // 生成新的访问令牌
-      const accessToken = this.jwtService.sign({
-        sub: payload.sub,
-        phone: payload.phone,
-      });
-
-      return { accessToken };
-    } catch {
+      payload = this.jwtService.verify<TokenPayload>(refreshToken);
+    } catch (error) {
       throw new UnauthorizedException('刷新令牌无效');
     }
+
+    // 从 Redis 获取存储的刷新令牌
+    const storedRefreshToken = await this.redis.getRefreshToken(payload.sub);
+    if (!storedRefreshToken) {
+      throw new UnauthorizedException('刷新令牌已过期');
+    }
+
+    // 验证刷新令牌是否匹配
+    if (storedRefreshToken !== refreshToken) {
+      throw new UnauthorizedException('刷新令牌无效');
+    }
+
+    // 生成新的访问令牌
+    const accessToken = this.jwtService.sign({
+      sub: payload.sub,
+      phone: payload.phone,
+    });
+
+    return { accessToken };
   }
 
   /**

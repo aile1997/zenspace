@@ -1,4 +1,12 @@
-import { Controller, Post, Get, Put, Body, UseGuards } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Get,
+  Put,
+  Body,
+  UseGuards,
+  HttpCode,
+} from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { SendCodeDto } from './dto/send-code.dto';
 import { LoginDto } from './dto/login.dto';
@@ -29,6 +37,7 @@ export class AuthController {
    * 开发环境下会在控制台打印验证码
    */
   @Post('send-code')
+  @HttpCode(200)
   async sendCode(@Body() dto: SendCodeDto): Promise<{ message: string }> {
     return this.authService.sendCode(dto.phone);
   }
@@ -42,6 +51,7 @@ export class AuthController {
    * 如果用户不存在则自动注册
    */
   @Post('login')
+  @HttpCode(200)
   async login(@Body() dto: LoginDto): Promise<AuthResponse> {
     return this.authService.login(dto);
   }
@@ -56,6 +66,7 @@ export class AuthController {
    */
   @Post('logout')
   @UseGuards(JwtAuthGuard)
+  @HttpCode(200)
   async logout(@CurrentUser() user: UserType): Promise<{ message: string }> {
     return this.authService.logout(user.id);
   }
@@ -68,6 +79,7 @@ export class AuthController {
    * 使用刷新令牌获取新的访问令牌
    */
   @Post('refresh')
+  @HttpCode(200)
   async refresh(
     @Body() dto: RefreshTokenDto,
   ): Promise<{ accessToken: string }> {
