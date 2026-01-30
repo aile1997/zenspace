@@ -30,6 +30,19 @@ export interface Booking {
   canCancel?: boolean; // 是否可取消
 }
 
+/** 向后兼容的预约信息（扁平结构，用于UI组件） */
+export interface LegacyBooking extends Booking {
+  userId?: string;
+  zoneId?: string;
+  zoneName: string;
+  seatId?: string;
+  seatLabel: string;
+  createdAt?: string;
+  checkInAt?: string;
+  checkOutAt?: string;
+  qrCode?: string;
+}
+
 /** 创建预约 DTO */
 export interface CreateBookingDTO {
   seatId: string;
