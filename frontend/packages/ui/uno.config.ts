@@ -23,16 +23,17 @@ export default defineConfig({
 
   // 主题配置
   theme: {
-    // 保持与 React 版本一致的颜色
+    // iOS 26.2 高级感配色
     colors: {
-      primary: '#1a1a1a',
-      secondary: '#4a4a4a',
+      primary: '#1A1A1A',
+      secondary: '#4A4A4A',
       accent: '#8E8E93',
       success: '#22c55e',
       warning: '#f97316',
       error: '#ef4444',
       info: '#3b82f6',
       'ios-bg': '#FFFFFF',
+      'ios-gray': '#F5F5F7',
       'grid-line': 'rgba(0, 0, 0, 0.03)',
     },
 
@@ -43,12 +44,19 @@ export default defineConfig({
       sans: ['"Inter"', 'sans-serif'],
     },
 
-    // 阴影
+    // iOS 超椭圆感圆角
+    borderRadius: {
+      '12': '12px',
+      '24': '24px',
+    },
+
+    // 精细化阴影系统（严禁硬阴影）
     boxShadow: {
+      'soft': '0 4px 24px -1px rgba(0, 0, 0, 0.06)',
+      'float': '0 10px 40px -10px rgba(0, 0, 0, 0.12)',
       'glass': '0 4px 20px rgba(0, 0, 0, 0.03)',
       'elevation-1': '0 2px 8px rgba(0, 0, 0, 0.04)',
       'elevation-2': '0 8px 16px rgba(0, 0, 0, 0.06)',
-      'float': '0 12px 40px rgba(0, 0, 0, 0.08)',
     },
 
     // 动画

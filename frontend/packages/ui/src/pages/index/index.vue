@@ -1,8 +1,8 @@
 <!-- ZenSpace 首页 -->
 <template>
-  <view class="min-h-screen bg-gray-50 flex flex-col pb-8">
+  <view class="min-h-screen bg-ios-gray flex flex-col pb-24">
     <!-- 头部区域 -->
-    <view class="pt-16 pb-8 px-8 flex justify-between items-end">
+    <view class="pt-16 pb-8 px-20 flex justify-between items-end">
       <view class="flex flex-col gap-2">
         <text class="text-[10px] font-bold tracking-[0.3em] text-accent uppercase pl-0.5">ZenSpace</text>
         <view class="relative group cursor-pointer flex items-center gap-2" @tap="handleLocationChange">
@@ -25,10 +25,10 @@
     </view>
 
     <!-- 实时流量统计 -->
-    <view class="px-6 flex flex-col gap-10 animate-fade-in">
+    <view class="px-20 flex flex-col gap-16 animate-fade-in">
       <!-- Section Header -->
-      <view class="flex items-center justify-between px-2">
-        <text class="text-[10px] font-bold text-accent tracking-[0.2em] uppercase">Real-time Traffic</text>
+      <view class="flex items-center justify-between">
+        <text class="text-13px font-400 color-#86868B tracking-[0.2em] uppercase">Real-time Traffic</text>
         <view class="flex items-center gap-2">
           <view
             @tap="goToMap"
@@ -48,7 +48,7 @@
       </view>
 
       <!-- Stats Card -->
-      <view class="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 flex flex-col gap-8 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-white">
+      <view class="bg-white rd-24 p-20 flex flex-col gap-16 shadow-soft">
         <!-- 加载状态骨架屏 -->
         <template v-if="zoneStore.loading">
           <view v-for="i in 3" :key="i" class="flex flex-col gap-3">
@@ -116,10 +116,10 @@
     </view>
 
     <!-- 功能卡片 -->
-    <view class="grid grid-cols-2 gap-5 px-6">
+    <view class="grid grid-cols-2 gap-16 px-20 mt-16">
       <!-- 智能选座 -->
       <view
-        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        class="group relative flex flex-col rd-24 overflow-hidden cursor-pointer shadow-soft hover:shadow-float transition-all duration-500 bg-white"
         @tap="goToBooking"
       >
         <view class="relative w-full aspect-[4/5] overflow-hidden">
@@ -144,7 +144,7 @@
 
       <!-- 积分商城 -->
       <view
-        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        class="group relative flex flex-col rd-24 overflow-hidden cursor-pointer shadow-soft hover:shadow-float transition-all duration-500 bg-white"
         @tap="goToRewards"
       >
         <view class="relative w-full aspect-[4/5] overflow-hidden">
