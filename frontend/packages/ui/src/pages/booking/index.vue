@@ -1,4 +1,4 @@
-<!-- ZenSpace 预约页 - 日期和区域选择 -->
+<!-- ZenSpace 预约页 - 日期和区域选择 (iOS 18 风格优化版) -->
 <template>
   <view class="booking-page">
     <!-- 头部 -->
@@ -22,10 +22,10 @@
           :class="{ 'date-item-active': selectedDate === index }"
           @tap="selectDate(index)"
         >
-          <text class="date-week" :class="selectedDate === index ? 'text-white opacity-80' : 'text-secondary opacity-40'">
+          <text class="date-week" :class="selectedDate === index ? 'text-white opacity-80' : 'text-gray-500 opacity-60'">
             {{ date.week }}
           </text>
-          <text class="date-day" :class="selectedDate === index ? 'text-white' : 'text-primary'">
+          <text class="date-day" :class="selectedDate === index ? 'text-white' : 'text-gray-900'">
             {{ date.day }}
           </text>
         </view>
@@ -210,15 +210,14 @@ const goBack = () => {
   display: flex;
   flex-direction: column;
   min-height: 100vh;
-  background: #f8f9fa;
+  background: white;
 }
 
 // 头部
 .booking-header {
   padding: 128rpx 64rpx 64rpx;
-  background: rgba(255, 255, 255, 0.8);
-  backdrop-filter: blur(24rpx);
-  border-bottom: 1px solid rgba(0, 0, 0, 0.05);
+  background: white;
+  border-bottom: 1px solid #f3f4f6;
   position: sticky;
   top: 0;
   z-index: 20;
@@ -263,6 +262,11 @@ const goBack = () => {
   display: flex;
   align-items: center;
   justify-content: center;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+
+  &:active {
+    transform: scale(0.95);
+  }
 }
 
 // 日期选择器
@@ -271,6 +275,13 @@ const goBack = () => {
   justify-content: space-between;
   align-items: center;
   gap: 24rpx;
+  overflow-x: auto;
+  padding-bottom: 16rpx;
+  -webkit-overflow-scrolling: touch;
+
+  &::-webkit-scrollbar {
+    display: none;
+  }
 }
 
 .date-item {
@@ -286,7 +297,7 @@ const goBack = () => {
   background: white;
   color: #8e8e93;
   box-shadow: 0 4rpx 16rpx rgba(0, 0, 0, 0.04);
-  border: 2rpx solid transparent;
+  border: 2rpx solid #f3f4f6;
 
   &:active {
     transform: scale(0.95);
@@ -298,6 +309,7 @@ const goBack = () => {
   color: white;
   box-shadow: 0 16rpx 40rpx rgba(26, 26, 26, 0.25);
   transform: translateY(-8rpx);
+  border-color: #1a1a1a;
 }
 
 .date-week {
@@ -328,8 +340,10 @@ const goBack = () => {
   border-radius: 64rpx;
   overflow: hidden;
   box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.03);
+  border: 1px solid #f3f4f6;
   animation: slide-up 0.6s cubic-bezier(0.16, 1, 0.3, 1) forwards;
   opacity: 0;
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 
   &:active {
     transform: scale(0.98);
@@ -353,7 +367,7 @@ const goBack = () => {
   top: 40rpx;
   right: 40rpx;
   z-index: 10;
-  background: rgba(255, 255, 255, 0.8);
+  background: rgba(255, 255, 255, 0.9);
   backdrop-filter: blur(24rpx);
   padding: 12rpx 24rpx;
   border-radius: 100rpx;
@@ -401,12 +415,13 @@ const goBack = () => {
   width: 100%;
   position: relative;
   overflow: hidden;
+  background: #f3f4f6;
 }
 
 .zone-img {
   width: 100%;
   height: 100%;
-  transition: transform 1s;
+  transition: transform 1s cubic-bezier(0.4, 0, 0.2, 1);
 }
 
 .zone-card:active .zone-img {
@@ -529,6 +544,7 @@ const goBack = () => {
   border-radius: 64rpx;
   overflow: hidden;
   box-shadow: 0 4rpx 24rpx rgba(0, 0, 0, 0.03);
+  border: 1px solid #f3f4f6;
 }
 
 .skeleton-image {
@@ -594,8 +610,18 @@ const goBack = () => {
   }
 }
 
-// 高调图片滤镜
-.high-key-img {
-  filter: contrast(0.95) brightness(1.05) saturate(0.9);
+// Material Icons
+.material-symbols-outlined {
+  font-family: 'Material Symbols Outlined';
+  font-weight: normal;
+  font-style: normal;
+  font-size: 24rpx;
+  line-height: 1;
+  letter-spacing: normal;
+  text-transform: none;
+  display: inline-block;
+  white-space: nowrap;
+  word-wrap: normal;
+  direction: ltr;
 }
 </style>

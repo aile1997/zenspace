@@ -1,59 +1,59 @@
-<!-- ZenSpace 首页 -->
+<!-- ZenSpace 首页 - 优化版本 (iOS 18 风格) -->
 <template>
-  <view class="min-h-screen bg-gray-50 flex flex-col pb-8">
-    <!-- 头部区域 -->
-    <view class="pt-16 pb-8 px-8 flex justify-between items-end">
+  <view class="min-h-screen bg-white flex flex-col pb-8">
+    <!-- Header Section -->
+    <view class="pt-16 pb-8 px-6 flex justify-between items-end">
       <view class="flex flex-col gap-2">
-        <text class="text-[10px] font-bold tracking-[0.3em] text-accent uppercase pl-0.5">ZenSpace</text>
+        <text class="text-[10px] font-bold tracking-[0.3em] text-gray-500 uppercase pl-0.5">ZenSpace</text>
         <view class="relative group cursor-pointer flex items-center gap-2" @tap="handleLocationChange">
-          <text class="font-serif text-[32px] font-light text-primary tracking-tight leading-tight">
+          <text class="font-serif text-[32px] font-light text-gray-900 tracking-tight leading-tight">
             丸の内
             <text class="text-2xl opacity-60">中央馆</text>
           </text>
-          <text class="material-symbols-outlined text-gray-300 group-hover:text-primary transition-colors text-[24px] self-start mt-2">
+          <text class="material-symbols-outlined text-gray-400 group-hover:text-gray-900 transition-colors text-[24px] self-start mt-2">
             expand_more
           </text>
         </view>
       </view>
       <view
         @tap="goToNotifications"
-        class="relative w-12 h-12 rounded-full border border-white bg-white/40 backdrop-blur-xl shadow-sm flex items-center justify-center hover:bg-white hover:shadow-md hover:scale-105 transition-all duration-300 active:scale-95"
+        class="relative w-12 h-12 rounded-full border border-gray-200 bg-white shadow-sm flex items-center justify-center hover:shadow-md hover:scale-105 transition-all duration-300 active:scale-95 cursor-pointer"
       >
-        <text class="material-symbols-outlined text-primary text-[22px]">notifications</text>
-        <view class="absolute top-3.5 right-3.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white"></view>
+        <text class="material-symbols-outlined text-gray-800 text-[22px]">notifications</text>
+        <view class="absolute top-3.5 right-3.5 w-2 h-2 rounded-full bg-red-500 ring-2 ring-white shadow-sm"></view>
       </view>
     </view>
 
-    <!-- 实时流量统计 -->
-    <view class="px-6 flex flex-col gap-10 animate-fade-in">
+    <!-- Real-time Traffic Section -->
+    <view class="px-6 flex flex-col gap-10">
       <!-- Section Header -->
       <view class="flex items-center justify-between px-2">
-        <text class="text-[10px] font-bold text-accent tracking-[0.2em] uppercase">Real-time Traffic</text>
+        <text class="text-[10px] font-bold text-gray-500 tracking-[0.2em] uppercase">Real-time Traffic</text>
         <view class="flex items-center gap-2">
           <view
             @tap="goToMap"
-            class="px-2 py-1 rounded-full bg-white/80 border border-gray-100 shadow-sm backdrop-blur flex items-center gap-1 cursor-pointer hover:bg-white transition-colors"
+            class="px-2 py-1 rounded-full bg-white border border-gray-200 shadow-sm flex items-center gap-1 cursor-pointer hover:bg-gray-50 transition-colors duration-300"
           >
-            <text class="material-symbols-outlined text-primary text-[14px]">map</text>
-            <text class="text-[9px] text-primary font-medium tracking-wider uppercase">Heatmap</text>
+            <text class="material-symbols-outlined text-gray-800 text-[14px]">map</text>
+            <text class="text-[9px] text-gray-800 font-medium tracking-wider uppercase">Heatmap</text>
           </view>
-          <view class="flex items-center gap-2 px-2 py-1 rounded-full bg-white/80 border border-gray-100 shadow-sm backdrop-blur">
+          <view class="flex items-center gap-2 px-2 py-1 rounded-full bg-white border border-gray-200 shadow-sm">
             <view class="relative flex h-2 w-2">
               <view class="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></view>
               <view class="relative inline-flex rounded-full h-2 w-2 bg-green-500"></view>
             </view>
-            <text class="text-[9px] text-primary font-bold tracking-wider uppercase">Live</text>
+            <text class="text-[9px] text-gray-800 font-bold tracking-wider uppercase">Live</text>
           </view>
         </view>
       </view>
 
       <!-- Stats Card -->
-      <view class="bg-white/60 backdrop-blur-xl rounded-[32px] p-8 flex flex-col gap-8 shadow-[0_8px_32px_rgba(0,0,0,0.03)] border border-white">
+      <view class="bg-white border border-gray-100 rounded-[32px] p-8 flex flex-col gap-8 shadow-sm">
         <!-- 1F 综合阅览区 -->
         <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('1f')">
           <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">1F 综合阅览区</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">82<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
+            <text class="text-xs text-gray-600 font-medium tracking-wide group-hover:text-gray-900 transition-colors">1F 综合阅览区</text>
+            <text class="font-display text-xl text-gray-900 font-bold leading-none">82<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
           <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
             <view class="h-full bg-gradient-to-r from-gray-600 via-gray-800 to-black w-[82%] rounded-full shadow-sm transition-all duration-1000 group-hover:w-[85%]"></view>
@@ -63,8 +63,8 @@
         <!-- 2F 静音研讨室 -->
         <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('2f')">
           <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">2F 静音研讨室</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">45<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
+            <text class="text-xs text-gray-600 font-medium tracking-wide group-hover:text-gray-900 transition-colors">2F 静音研讨室</text>
+            <text class="font-display text-xl text-gray-900 font-bold leading-none">45<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
           <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
             <view class="h-full bg-gradient-to-r from-gray-300 to-gray-500 w-[45%] rounded-full transition-all duration-1000 group-hover:w-[48%]"></view>
@@ -74,8 +74,8 @@
         <!-- 3F 开放协作台 -->
         <view class="flex flex-col gap-3 group cursor-pointer" @tap="handleZoneClick('3f')">
           <view class="flex justify-between items-end">
-            <text class="text-xs text-secondary font-medium tracking-wide group-hover:text-primary transition-colors">3F 开放协作台</text>
-            <text class="font-display text-xl text-primary font-bold leading-none">12<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
+            <text class="text-xs text-gray-600 font-medium tracking-wide group-hover:text-gray-900 transition-colors">3F 开放协作台</text>
+            <text class="font-display text-xl text-gray-900 font-bold leading-none">12<text class="text-[10px] text-gray-400 ml-0.5 font-normal">%</text></text>
           </view>
           <view class="h-2 w-full bg-gray-100 rounded-full overflow-hidden p-[2px]">
             <view class="h-full bg-gradient-to-r from-gray-200 to-gray-300 w-[12%] rounded-full transition-all duration-1000 group-hover:w-[15%]"></view>
@@ -84,18 +84,18 @@
       </view>
     </view>
 
-    <!-- 功能卡片 -->
-    <view class="grid grid-cols-2 gap-5 px-6">
+    <!-- Feature Cards Section -->
+    <view class="grid grid-cols-2 gap-5 px-6 mt-10">
       <!-- 智能选座 -->
       <view
-        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        class="group relative flex flex-col rounded-[24px] overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-all duration-500 transform hover:-translate-y-1 bg-white border border-gray-100"
         @tap="goToBooking"
       >
-        <view class="relative w-full aspect-[4/5] overflow-hidden">
+        <view class="relative w-full aspect-[4/5] overflow-hidden bg-gray-100">
           <image
             src="https://images.unsplash.com/photo-1507537297725-24a1c434c67b?q=80&w=800&auto=format&fit=crop"
             mode="aspectFill"
-            class="w-full h-full object-cover high-key-img transition-transform duration-1000 group-hover:scale-110"
+            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
           />
           <view class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></view>
         </view>
@@ -113,14 +113,14 @@
 
       <!-- 积分商城 -->
       <view
-        class="group relative flex flex-col rounded-[32px] overflow-hidden cursor-pointer shadow-sm hover:shadow-xl transition-all duration-500 transform hover:-translate-y-1 bg-white"
+        class="group relative flex flex-col rounded-[24px] overflow-hidden cursor-pointer shadow-sm hover:shadow-md transition-all duration-500 transform hover:-translate-y-1 bg-white border border-gray-100"
         @tap="goToRewards"
       >
-        <view class="relative w-full aspect-[4/5] overflow-hidden">
+        <view class="relative w-full aspect-[4/5] overflow-hidden bg-gray-100">
           <image
             src="https://images.unsplash.com/photo-1616031036329-373b53c65c2b?q=80&w=800&auto=format&fit=crop"
             mode="aspectFill"
-            class="w-full h-full object-cover high-key-img transition-transform duration-1000 group-hover:scale-110"
+            class="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110"
           />
           <view class="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent opacity-90"></view>
         </view>
@@ -200,11 +200,6 @@ const handleZoneClick = (zoneId: string) => {
   direction: ltr;
 }
 
-// 高调图片滤镜
-.high-key-img {
-  filter: contrast(0.95) brightness(1.05) saturate(0.9);
-}
-
 // 动画关键帧（UniApp 兼容）
 @keyframes ping {
   75%, 100% {
@@ -228,5 +223,21 @@ const handleZoneClick = (zoneId: string) => {
   to {
     opacity: 1;
   }
+}
+
+// Grid layout
+.grid {
+  display: grid;
+  grid-template-columns: repeat(2, 1fr);
+  gap: 20rpx;
+}
+
+.grid-cols-2 {
+  grid-template-columns: repeat(2, 1fr);
+}
+
+// Smooth transitions
+view {
+  transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
 }
 </style>
