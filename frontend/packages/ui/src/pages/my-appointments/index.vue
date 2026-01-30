@@ -1,8 +1,8 @@
 <!-- ZenSpace 我的预约页 -->
 <template>
-  <view class="flex flex-col h-full bg-gray-50 min-h-screen">
+  <view class="flex flex-col h-full bg-ios-gray min-h-screen">
     <!-- 头部 -->
-    <view class="pt-14 pb-4 px-6 bg-white/80 backdrop-blur sticky top-0 z-20 shadow-sm border-b border-gray-100">
+    <view class="pt-14 pb-4 px-20 bg-white backdrop-blur sticky top-0 z-20 shadow-soft">
       <view class="flex items-center justify-between mb-6">
         <view class="flex items-center gap-4">
           <view class="w-8 h-8 rounded-full bg-gray-100 flex items-center justify-center" @tap="goBack">
@@ -37,9 +37,9 @@
     </view>
 
     <!-- 预约列表 -->
-    <view class="p-6 flex flex-col gap-4 pb-24">
+    <view class="p-20 flex flex-col gap-16 pb-24">
       <!-- 天气小组件（仅即将开始显示） -->
-      <view v-if="activeTab === 'upcoming'" class="bg-gradient-to-br from-blue-50 to-white p-4 rounded-2xl border border-blue-100 flex items-center justify-between shadow-sm mb-6">
+      <view v-if="activeTab === 'upcoming'" class="bg-gradient-to-br from-blue-50 to-white p-20 rd-24 flex items-center justify-between shadow-soft mb-8">
         <view class="flex items-center gap-3">
           <text class="material-symbols-outlined text-3xl text-orange-400">partly_cloudy_day</text>
           <view class="flex flex-col">
@@ -62,7 +62,7 @@
       <view
         v-for="booking in filteredBookings"
         :key="booking.id"
-        class="group relative flex flex-col bg-white rounded-[24px] shadow-sm border border-black/5 overflow-hidden transition-all duration-300"
+        class="group relative flex flex-col bg-white rd-24 shadow-soft overflow-hidden transition-all duration-300"
       >
         <!-- 顶部状态色条 -->
         <view
@@ -75,7 +75,7 @@
           }"
         ></view>
 
-        <view class="p-6 pb-0 flex flex-col gap-4">
+        <view class="p-20 pb-0 flex flex-col gap-16">
           <view class="flex justify-between items-start">
             <view>
               <text class="text-[10px] text-secondary tracking-wide uppercase block mb-1">Zone Area</text>
@@ -108,7 +108,7 @@
         </view>
 
         <!-- 底部操作区 -->
-        <view class="px-6 pb-6 flex justify-between items-center">
+        <view class="px-20 pb-20 flex justify-between items-center">
           <view class="flex items-center gap-2">
             <view
               class="w-2 h-2 rounded-full"
@@ -124,13 +124,13 @@
           <!-- 即将开始的操作按钮 -->
           <view v-if="activeTab === 'upcoming' && isConfirmed(booking.status)" class="flex gap-3">
             <view
-              class="text-[11px] text-red-500 font-medium px-3 py-1.5 rounded-lg transition-colors"
+              class="text-[11px] text-red-500 font-medium px-3 py-1.5 rd-12 transition-colors"
               @tap.stop="handleCancel(booking.id)"
             >
               Cancel
             </view>
             <view
-              class="bg-primary text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2 rounded-xl shadow-lg shadow-black/20 transition-transform flex items-center gap-2"
+              class="bg-primary text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2 rd-12 shadow-soft transition-transform flex items-center gap-2"
               @tap.stop="showTicketDetail(booking)"
             >
               <text class="material-symbols-outlined text-[14px]">qr_code</text>
@@ -141,7 +141,7 @@
           <!-- 进行中的签退按钮 -->
           <view v-if="activeTab === 'upcoming' && isActive(booking.status)" class="flex gap-3">
             <view
-              class="bg-success text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2 rounded-xl shadow-lg"
+              class="bg-success text-white text-[11px] font-bold uppercase tracking-wider px-5 py-2 rd-12 shadow-soft"
               @tap.stop="handleCheckOut(booking.id)"
             >
               签退
