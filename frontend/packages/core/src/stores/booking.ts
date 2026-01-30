@@ -5,13 +5,26 @@
  */
 import { defineStore } from 'pinia';
 import { ref } from 'vue';
-import type { Booking, BookingStatus, CreateBookingDTO } from '../types';
+import type { Booking, LegacyBooking, BookingStatus, CreateBookingDTO } from '../types';
 import { getAdapters } from '../adapters';
 
 export const useBookingStore = defineStore('booking', () => {
   // ========== 状态 ==========
   const bookings = ref<Booking[]>([]);
   const currentBooking = ref<Booking | null>(null);
+
+  // ========== 辅助函数 ==========
+
+  /**
+   * 将 Booking 转换为 LegacyBooking（向后兼容）
+   */
+  const adaptBookingToLegacy = (booking: Booking): LegacyBooking => {
+    return {
+      ...booking,
+      zoneName: booking.seat.zone.name,
+      seatLabel: booking.seat.label,
+    };
+  };
 
   // ========== Actions ==========
 
@@ -42,6 +55,22 @@ export const useBookingStore = defineStore('booking', () => {
         status: BookingStatus.CANCELLED,
       };
     }
+  };
+
+  /**
+   * 签到（暂未实现）
+   */
+  const checkIn = async (bookingId: string) => {
+    // TODO: 实现签到逻辑
+    console.warn('checkIn not implemented yet');
+  };
+
+  /**
+   * 签退（暂未实现）
+   */
+  const checkOut = async (bookingId: string) => {
+    // TODO: 实现签退逻辑
+    console.warn('checkOut not implemented yet');
   };
 
   /**
@@ -88,5 +117,8 @@ export const useBookingStore = defineStore('booking', () => {
     checkOut,
     fetchBookings,
     clearBookings,
+
+    // 辅助函数
+    adaptBookingToLegacy,
   };
 });
